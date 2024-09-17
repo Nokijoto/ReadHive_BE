@@ -4,7 +4,7 @@ using ProjectBase.Models;
 
 namespace Domain.Entities;
 
-public class AppUser : IdentityUser<Guid>, IBase
+public class AppUser : IdentityUser, IBase
 {
     
     public string? FirstName { get; set; }

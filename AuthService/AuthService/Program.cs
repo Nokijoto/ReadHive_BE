@@ -1,4 +1,20 @@
+using Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using Serilog;
+
 var builder = WebApplication.CreateBuilder(args);
+
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("logs/api.log", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Host.UseSerilog();
 
 // Add services to the container.
 

@@ -8,7 +8,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\ProjectBase\ProjectBase.csproj" />
-      <ProjectReference Include="..\Application\Application.csproj" />
     </ItemGroup>
 
     <ItemGroup>

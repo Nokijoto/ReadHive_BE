@@ -316,16 +316,6 @@
           "buildTransitive/net6.0/_._": {}
         }
       },
-      "Application/1.0.0": {
-        "type": "project",
-        "framework": ".NETCoreApp,Version=v7.0",
-        "compile": {
-          "bin/placeholder/Application.dll": {}
-        },
-        "runtime": {
-          "bin/placeholder/Application.dll": {}
-        }
-      },
       "ProjectBase/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v7.0",
@@ -781,11 +771,6 @@
         "useSharedDesignerContext.txt"
       ]
     },
-    "Application/1.0.0": {
-      "type": "project",
-      "path": "../Application/Application.csproj",
-      "msbuildProject": "../Application/Application.csproj"
-    },
     "ProjectBase/1.0.0": {
       "type": "project",
       "path": "../../ProjectBase/ProjectBase.csproj",
@@ -794,7 +779,6 @@
   },
   "projectFileDependencyGroups": {
     "net7.0": [
-      "Application >= 1.0.0",
       "Microsoft.AspNetCore.Identity.EntityFrameworkCore >= 7.0.20",
       "ProjectBase >= 1.0.0"
     ]
@@ -832,9 +816,6 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "projectReferences": {
-            "M:\\Inzynierka\\Backend\\AuthService\\Application\\Application.csproj": {
-              "projectPath": "M:\\Inzynierka\\Backend\\AuthService\\Application\\Application.csproj"
-            },
             "M:\\Inzynierka\\Backend\\ProjectBase\\ProjectBase.csproj": {
               "projectPath": "M:\\Inzynierka\\Backend\\ProjectBase\\ProjectBase.csproj"
             }
