@@ -1,0 +1,6 @@
+﻿ervices:
+  webapplication1:
+    image: webapplication1
+    build:
+      context: .
+      dockerfile: AuthService/WebApplication1/Dockerfile
