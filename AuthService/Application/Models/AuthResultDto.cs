@@ -1,6 +1,6 @@
 ﻿namespace Application.Models;
 
-public class AuthenticationResult
+public class AuthenticationResultDto
 {
     public bool Succeeded { get; set; }
     public string Token { get; set; } // Token JWT

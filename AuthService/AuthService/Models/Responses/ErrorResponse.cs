@@ -2,5 +2,9 @@
 
 public class ErrorResponse
 {
+    public ErrorResponse(IEnumerable<Exception> errors)
+    {
+        Errors = errors.Select(e => e.Message);
+    }
     public IEnumerable<string> Errors { get; set; }
 }

@@ -4,6 +4,6 @@ namespace Application.Interfaces;
 
 public interface IAuthService
 {
-    Task<AuthenticationResult> RegisterAsync(RegisterDto registerDto);
-    Task<AuthenticationResult> LoginAsync(LoginDto loginDto);
+    Task<AuthenticationResultDto> RegisterAsync(RegisterDto registerDto);
+    Task<AuthenticationResultDto> LoginAsync(LoginDto loginDto);
 }
