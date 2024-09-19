@@ -1,4 +1,7 @@
-﻿namespace Application.Models;
+﻿using System;
+using System.Collections.Generic;
+
+namespace Application.Models;
 
 public class AuthenticationResultDto
 {

@@ -1,4 +1,5 @@
-﻿using Application.Interfaces;
+﻿using System.Threading.Tasks;
+using Application.Interfaces;
 using Application.Models;
 using AuthService.Models.Requests;
 using AuthService.Models.Responses;

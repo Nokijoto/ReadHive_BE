@@ -1,4 +1,6 @@
-﻿namespace AuthService.Models.Responses;
+﻿using System;
+
+namespace AuthService.Models.Responses;
 
 public class AuthResponse
 {
