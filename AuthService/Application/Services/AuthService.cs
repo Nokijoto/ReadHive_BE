@@ -34,8 +34,8 @@ public class AuthService : IAuthService
         {
             UserName = registerDto.UserName,
             Email = registerDto.Email,
-            // FirstName = registerDto.FirstName,
-            // LastName = registerDto.LastName
+            FirstName = registerDto.FirstName,
+            LastName = registerDto.LastName
         };
 
         var result = await _userManager.CreateAsync(user, registerDto.Password);

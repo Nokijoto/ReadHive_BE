@@ -1,12 +1,12 @@
-﻿using Domain.Entities;
+﻿using Application.Models;
 
-namespace Domain.Interfaces;
+namespace Application.Interfaces;
 
-public interface IAppUserRepository
+public interface IUserService
 {
-    Task<AppUser?> GetByIdAsync(Guid id);
-    Task<AppUser?> GetByEmailAsync(string email);
-    Task<AppUser?> GetByUserNameAsync(string userName);
+    Task<UserDto> GetByIdAsync(Guid id);
+    Task<UserDto> GetByEmailAsync(string email);
+    Task<UserDto> GetByUserNameAsync(string userName);
     
     Task<string?> getProfilePictureUrlAsync(Guid id);
     Task<DateTime?> getLastLoginDateAsync(Guid id);
@@ -18,8 +18,8 @@ public interface IAppUserRepository
     Task<DateTime?> getDeletedAtAsync(Guid id);
     Task<bool?> getIsActiveAsync(Guid id);
     
-    Task<bool> AddAsync(AppUser appUser);
-    Task<bool> UpdateAsync(AppUser appUser);
+    Task<bool> AddAsync(UserDto userDto);
+    Task<bool> UpdateAsync(UserDto userDto);
     
     Task<bool> SetFirstNameAsync(Guid id, string firstName);
     Task<bool> SetLastNameAsync(Guid id, string lastName);
@@ -32,9 +32,6 @@ public interface IAppUserRepository
     Task<bool> SetIsSuspendedAsync(Guid id, bool isSuspended);
     Task<bool> SetSuspensionReasonAsync(Guid id, string suspensionReason);
     Task<bool> SetIsDeletedAsync(Guid id, bool isDeleted);
-    Task<bool> SetDeletedAtAsync(Guid id, DateTime deletedAt);
-    
-    
-    
-    
+    Task<bool> SetDeletedAtAsync(Guid id, DateTime deletedAt);  
 }
+

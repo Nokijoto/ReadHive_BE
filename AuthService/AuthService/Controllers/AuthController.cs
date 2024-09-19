@@ -42,7 +42,7 @@ public class AuthController : ControllerBase
             return BadRequest(new ErrorResponse(result.Errors));
         }
 
-        return Ok(new AuthResponse(result.Token, result.Expiration));
+        return NoContent();
     }
     
     [HttpGet("verifyToken")]
