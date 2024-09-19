@@ -1,14 +1,33 @@
 /.idea/
+
 /AuthService/AuthService/logs/
+
 /AuthService/Application/bin/
 /AuthService/Application/obj/
+
 /AuthService/Domain/bin/
 /AuthService/Domain/obj/
+
 /AuthService/Infrastructure/bin/
 /AuthService/Infrastructure/obj/
-/AuthService
 
 /ProjectBase/bin/
 /ProjectBase/obj/
 
 *.cache
+
+
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
