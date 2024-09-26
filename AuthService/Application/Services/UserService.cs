@@ -1,7 +1,6 @@
 ﻿using Application.Extensions;
 using Application.Interfaces;
 using Application.Models;
-using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Interfaces;
 
@@ -31,124 +30,474 @@ public class UserService: IUserService
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _log.LogError(e.Message,e);
             throw;
         }
     }
 
-    public Task<UserDto> GetByEmailAsync(string email)
+    public async Task<UserDto> GetByEmailAsync(string email)
     {
-        throw new NotImplementedException();
+        try
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                throw new ArgumentException("Email cannot be empty");
+            }
+            var user = await _userRepository.GetByEmailAsync(email);
+            if (user != null) return await Task.FromResult(user.MapToDto());
+            else return await Task.FromResult(new UserDto());
+        
+        }
+        catch (Exception e)
+        {
+            _log.LogError(e.Message, e);
+            throw;
+        }
     }
 
-    public Task<UserDto> GetByUserNameAsync(string userName)
+    public async Task<UserDto> GetByUserNameAsync(string userName)
     {
-        throw new NotImplementedException();
+        try
+        {
+            if (string.IsNullOrEmpty(userName))
+            {
+                throw new ArgumentException("User name cannot be empty");
+            }
+            var user = await _userRepository.GetByUserNameAsync(userName);
+            if (user != null) return await Task.FromResult(user.MapToDto());
+            else return await Task.FromResult(new UserDto()); 
+        }
+        catch (Exception e)
+        {
+            _log.LogError(e.Message, e);
+            throw;
+        }
     }
 
-    public Task<string?> getProfilePictureUrlAsync(Guid id)
+    public async Task<string?> getProfilePictureUrlAsync(Guid id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            if(id == Guid.Empty)
+            {
+                throw new ArgumentException("User id cannot be empty");
+            }
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user != null) return user.ProfilePictureUrl;
+            else return null;           
+        }
+        catch (Exception e)
+        {
+            _log.LogError(e.Message, e);
+            throw;
+        }
     }
 
-    public Task<DateTime?> getLastLoginDateAsync(Guid id)
+    public async Task<DateTime?> getLastLoginDateAsync(Guid id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            if(id == Guid.Empty)
+            {
+                throw new ArgumentException("User id cannot be empty");
+            }
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user != null) return user.LastLoginDate;
+            else return null;           
+        }
+        catch (Exception e)
+        {
+            _log.LogError(e.Message, e);
+            throw;
+        }   
     }
 
-    public Task<bool?> getAgreedToTermsAndConditionsAsync(Guid id)
-    {
-        throw new NotImplementedException();
+    public async Task<bool?> getAgreedToTermsAndConditionsAsync(Guid id)
+    { 
+        try
+        {
+            if(id == Guid.Empty)
+            {
+                throw new ArgumentException("User id cannot be empty");
+            }
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user != null) return await Task.FromResult(user.AgreedToTermsAndConditions);
+            else return await Task.FromResult(false);           
+        }
+        catch (Exception e)
+        {
+            _log.LogError(e.Message, e);
+            throw;
+        }
     }
 
-    public Task<bool?> getAgreedToPrivacyPolicyAsync(Guid id)
+    public async Task<bool?> getAgreedToPrivacyPolicyAsync(Guid id)
     {
-        throw new NotImplementedException();
+      try
+      {
+          if(id == Guid.Empty)
+          {
+              throw new ArgumentException("User id cannot be empty");
+          }
+          var user = await _userRepository.GetByIdAsync(id);
+          if (user != null) return await Task.FromResult(user.AgreedToPrivacyPolicy);
+          else return await Task.FromResult(false);           
+      }
+      catch (Exception e)
+      {
+          _log.LogError(e.Message, e);
+          throw;
+      }
     }
 
-    public Task<bool?> getIsSuspendedAsync(Guid id)
+    public async Task<bool?> getIsSuspendedAsync(Guid id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            if(id == Guid.Empty)
+            {
+                throw new ArgumentException("User id cannot be empty");
+            }
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user != null) return await Task.FromResult(user.IsSuspended);
+            else return await Task.FromResult(false);           
+        }
+        catch (Exception e)
+        {
+            _log.LogError(e.Message, e);
+            throw;
+        }   
     }
 
-    public Task<string?> getSuspensionReasonAsync(Guid id)
+    public async Task<string?> getSuspensionReasonAsync(Guid id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            if(id == Guid.Empty)
+            {
+                throw new ArgumentException("User id cannot be empty");
+            }
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user != null) return await Task.FromResult(user.SuspensionReason);
+            else return await Task.FromResult(String.Empty);
+        }
+        catch (Exception e)
+        {
+            _log.LogError(e.Message, e);
+            throw;
+        }   
     }
 
-    public Task<bool?> getIsDeletedAsync(Guid id)
+    public async Task<bool?> getIsDeletedAsync(Guid id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var user = await this.GetByIdAsync(id);
+            return await Task.FromResult(user.IsDeleted);
+        }
+        catch (Exception e)
+        {
+            _log.LogError(e.Message, e);
+            throw;
+        }
     }
 
-    public Task<DateTime?> getDeletedAtAsync(Guid id)
+    public async Task<DateTime?> getDeletedAtAsync(Guid id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var user = await this.GetByIdAsync(id);
+            return await Task.FromResult(user.DeletedAt);
+        }
+        catch (Exception e)
+        {
+            _log.LogError(e.Message, e);
+            throw;
+        }   
     }
 
-    public Task<bool?> getIsActiveAsync(Guid id)
+    public async Task<bool?> getIsActiveAsync(Guid id)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var user = await this.GetByIdAsync(id);
+            return await Task.FromResult(user.IsActive);
+        }
+        catch (Exception e)
+        {
+            _log.LogError(e.Message, e);
+            throw;
+        }
     }
 
-    public Task<bool> AddAsync(UserDto userDto)
+    public async Task<bool> AddAsync(UserDto userDto)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var user = userDto.MapToEntity();
+            await _userRepository.AddAsync(user);
+            return await Task.FromResult(true);
+        }
+        catch (Exception e)
+        {
+            _log.LogError(e.Message, e);
+            throw;
+        }
     }
 
-    public Task<bool> UpdateAsync(UserDto userDto)
+    public async Task<bool> UpdateAsync(UserDto userDto)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var user = userDto.MapToEntity();
+            await _userRepository.UpdateAsync(user);
+            return await Task.FromResult(true);
+        }
+        catch (Exception e)
+        {
+            _log.LogError(e.Message, e);
+            throw;
+        }
     }
 
-    public Task<bool> SetFirstNameAsync(Guid id, string firstName)
+    public async Task<bool> SetFirstNameAsync(Guid id, string firstName)
     {
-        throw new NotImplementedException();
+       try
+       {
+           if(id == Guid.Empty)
+           {
+               throw new ArgumentException("User id cannot be empty");
+           }
+           var user = await _userRepository.GetByIdAsync(id);
+           if (user != null)
+           {
+               user.FirstName = firstName;
+               await _userRepository.UpdateAsync(user);
+           }
+
+           return await Task.FromResult(true);
+       }
+       catch (Exception e)
+       {
+           _log.LogError(e.Message, e);
+           throw;
+       }
     }
 
-    public Task<bool> SetLastNameAsync(Guid id, string lastName)
+    public async Task<bool> SetLastNameAsync(Guid id, string lastName)
     {
-        throw new NotImplementedException();
+        try
+        {
+            if(id == Guid.Empty)
+            {
+                throw new ArgumentException("User id cannot be empty");
+            }
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user != null)
+            {
+                user.LastName = lastName;
+                await _userRepository.UpdateAsync(user);
+            }
+
+            return await Task.FromResult(true);
+        }
+        catch (Exception e)
+        {
+            _log.LogError(e.Message, e);
+            throw;
+        }
     }
 
-    public Task<bool> SetProfilePictureUrlAsync(Guid id, string profilePictureUrl)
+    public async Task<bool> SetProfilePictureUrlAsync(Guid id, string profilePictureUrl)
     {
-        throw new NotImplementedException();
+        try
+        {
+            if(id == Guid.Empty)
+            {
+                throw new ArgumentException("User id cannot be empty");
+            }
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user != null)
+            {
+                user.ProfilePictureUrl = profilePictureUrl;
+                await _userRepository.UpdateAsync(user);
+            }
+
+            return await Task.FromResult(true);
+        }
+        catch (Exception e)
+        {
+            _log.LogError(e.Message, e);
+            throw;
+        }
     }
 
-    public Task<bool> SetLastLoginDateAsync(Guid id, DateTime lastLoginDate)
+    public async Task<bool> SetLastLoginDateAsync(Guid id, DateTime lastLoginDate)
     {
-        throw new NotImplementedException();
+        try
+        {
+            if(id == Guid.Empty)
+            {
+                throw new ArgumentException("User id cannot be empty");
+            }
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user != null)
+            {
+                user.LastLoginDate = lastLoginDate;
+                await _userRepository.UpdateAsync(user);
+            }
+
+            return await Task.FromResult(true);
+        }
+        catch (Exception e)
+        {
+            _log.LogError(e.Message, e);
+            throw;
+        }
     }
 
-    public Task<bool> SetAgreedToTermsAndConditionsAsync(Guid id, bool agreedToTermsAndConditions)
+    public async Task<bool> SetAgreedToTermsAndConditionsAsync(Guid id, bool agreedToTermsAndConditions)
     {
-        throw new NotImplementedException();
+        try
+        {
+            if(id == Guid.Empty)
+            {
+                throw new ArgumentException("User id cannot be empty");
+            }
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user != null)
+            {
+                user.AgreedToTermsAndConditions = agreedToTermsAndConditions;
+                await _userRepository.UpdateAsync(user);
+            }
+
+            return await Task.FromResult(true);
+        }
+        catch (Exception e)
+        {
+            _log.LogError(e.Message, e);
+            throw;
+        }
     }
 
-    public Task<bool> SetAgreedToPrivacyPolicyAsync(Guid id, bool agreedToPrivacyPolicy)
+    public async Task<bool> SetAgreedToPrivacyPolicyAsync(Guid id, bool agreedToPrivacyPolicy)
     {
-        throw new NotImplementedException();
+        try
+        {
+            if(id == Guid.Empty)
+            {
+                throw new ArgumentException("User id cannot be empty");
+            }
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user != null)
+            {
+                user.AgreedToPrivacyPolicy = agreedToPrivacyPolicy;
+                await _userRepository.UpdateAsync(user);
+            }
+
+            return await Task.FromResult(true);
+        }
+        catch (Exception e)
+        {
+            _log.LogError(e.Message, e);
+            throw;
+        }
     }
 
-    public Task<bool> SetIsSuspendedAsync(Guid id, bool isSuspended)
+    public async Task<bool> SetIsSuspendedAsync(Guid id, bool isSuspended)
     {
-        throw new NotImplementedException();
+        try
+        {
+            if(id == Guid.Empty)
+            {
+                throw new ArgumentException("User id cannot be empty");
+            }
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user != null)
+            {
+                user.IsSuspended = isSuspended;
+                await _userRepository.UpdateAsync(user);
+            }
+
+            return await Task.FromResult(true);
+        }
+        catch (Exception e)
+        {
+            _log.LogError(e.Message, e);
+            throw;
+        }
     }
 
-    public Task<bool> SetSuspensionReasonAsync(Guid id, string suspensionReason)
+    public async Task<bool> SetSuspensionReasonAsync(Guid id, string suspensionReason)
     {
-        throw new NotImplementedException();
+        try
+        {
+            if(id == Guid.Empty)
+            {
+                throw new ArgumentException("User id cannot be empty");
+            }
+            var user = await _userRepository.GetByIdAsync(id);
+            if (user != null)
+            {
+                user.SuspensionReason = suspensionReason;
+                await _userRepository.UpdateAsync(user);
+            }
+
+            return await Task.FromResult(true);
+        }
+        catch (Exception e)
+        {
+            _log.LogError(e.Message, e);
+            throw;
+        }
     }
 
-    public Task<bool> SetIsDeletedAsync(Guid id, bool isDeleted)
+    public async Task<bool> SetIsDeletedAsync(Guid id, bool isDeleted)
     {
-        throw new NotImplementedException();
+       try
+       {
+           if(id == Guid.Empty)
+           {
+               throw new ArgumentException("User id cannot be empty");
+           }
+           var user = await _userRepository.GetByIdAsync(id);
+           if (user != null)
+           {
+               user.IsDeleted = isDeleted;
+               await _userRepository.UpdateAsync(user);
+           }
+
+           return await Task.FromResult(true);
+       }
+       catch (Exception e)
+       {
+           _log.LogError(e.Message, e);
+           throw;
+       }
     }
 
-    public Task<bool> SetDeletedAtAsync(Guid id, DateTime deletedAt)
+    public async Task<bool> SetDeletedAtAsync(Guid id, DateTime deletedAt)
     {
-        throw new NotImplementedException();
+       try
+       {
+           if(id == Guid.Empty)
+           {
+               throw new ArgumentException("User id cannot be empty");
+           }
+           var user = await _userRepository.GetByIdAsync(id);
+           if (user != null)
+           {
+               user.DeletedAt = deletedAt;
+               await _userRepository.UpdateAsync(user);
+           }
+
+           return await Task.FromResult(true);
+       }
+       catch (Exception e)
+       {
+           _log.LogError(e.Message, e);
+           throw;
+       }
     }
     
 }
