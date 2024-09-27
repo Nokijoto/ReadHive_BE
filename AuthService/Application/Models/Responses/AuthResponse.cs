@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AuthService.Models.Responses;
+namespace Application.Models.Responses;
 
 public class AuthResponse
 {

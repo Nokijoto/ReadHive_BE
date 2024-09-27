@@ -1,4 +1,5 @@
-﻿using Application.Interfaces;
+﻿using System.Reflection;
+using Application.Interfaces;
 using Domain.Interfaces;
 using Infrastructure.Interfaces;
 using Infrastructure.Services;
@@ -10,6 +11,12 @@ public static class ServicesCollectionExtension
     public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
         services.AddAutoMapper(typeof(Program));
+        services.AddMediatR(
+            cfg => 
+                cfg.RegisterServicesFromAssemblies(
+                    typeof(Application.Commands.Register.RegisterCommand).Assembly 
+                )
+            );
         services.AddScoped<ILoggingService, SerilogLoggingService>();
         services.AddScoped<IAuthService, Application.Services.AuthService>();
         services.AddScoped<IAppUserRepository, Infrastructure.Repositories.AppUserRepository>();

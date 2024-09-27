@@ -12,12 +12,12 @@ namespace Infrastructure.Services;
 public class JwtTokenGenerator : IJwtGenerator
 {
     private readonly IConfiguration _configuration;
-    private readonly ILoggingService _Log;
+    private readonly ILoggingService _log;
 
     public JwtTokenGenerator(IConfiguration configuration, ILoggingService log)
     {
         _configuration = configuration;
-        _Log = log;
+        _log = log;
     }
 
     public string GenerateToken(AppUser user)
@@ -47,7 +47,7 @@ public class JwtTokenGenerator : IJwtGenerator
         }
         catch (Exception e)
         {
-            _Log.LogError("Error generating token", e);
+            _log.LogError("Error generating token", e);
             throw;
         }
        

@@ -1,4 +1,4 @@
-﻿using Application.Models;
+﻿using Application.Models.Dto;
 using Domain.Entities;
 
 namespace Application.Extensions;

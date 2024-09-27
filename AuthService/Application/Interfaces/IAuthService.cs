@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Application.Models;
+using Application.Models.Dto;
 
 namespace Application.Interfaces;
 

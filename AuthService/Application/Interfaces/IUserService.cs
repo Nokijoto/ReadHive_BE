@@ -1,4 +1,4 @@
-﻿using Application.Models;
+﻿using Application.Models.Dto;
 
 namespace Application.Interfaces;
 
@@ -8,15 +8,15 @@ public interface IUserService
     Task<UserDto> GetByEmailAsync(string email);
     Task<UserDto> GetByUserNameAsync(string userName);
     
-    Task<string?> getProfilePictureUrlAsync(Guid id);
-    Task<DateTime?> getLastLoginDateAsync(Guid id);
-    Task<bool?> getAgreedToTermsAndConditionsAsync(Guid id);
-    Task<bool?> getAgreedToPrivacyPolicyAsync(Guid id);
-    Task<bool?> getIsSuspendedAsync(Guid id);
-    Task<string?> getSuspensionReasonAsync(Guid id);
-    Task<bool?> getIsDeletedAsync(Guid id);
-    Task<DateTime?> getDeletedAtAsync(Guid id);
-    Task<bool?> getIsActiveAsync(Guid id);
+    Task<string?> GetProfilePictureUrlAsync(Guid id);
+    Task<DateTime?> GetLastLoginDateAsync(Guid id);
+    Task<bool?> GetAgreedToTermsAndConditionsAsync(Guid id);
+    Task<bool?> GetAgreedToPrivacyPolicyAsync(Guid id);
+    Task<bool?> GetIsSuspendedAsync(Guid id);
+    Task<string?> GetSuspensionReasonAsync(Guid id);
+    Task<bool?> GetIsDeletedAsync(Guid id);
+    Task<DateTime?> GetDeletedAtAsync(Guid id);
+    Task<bool?> GetIsActiveAsync(Guid id);
     
     Task<bool> AddAsync(UserDto userDto);
     Task<bool> UpdateAsync(UserDto userDto);

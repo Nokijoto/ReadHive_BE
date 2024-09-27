@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 using Application.Exceptions;
 using Application.Interfaces;
-using Application.Models;
+using Application.Models.Dto;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Domain.Entities;
-using Domain.Interfaces;
+using Infrastructure.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
@@ -21,47 +17,86 @@ public class AuthService : IAuthService
 {
     private readonly UserManager<AppUser> _userManager; 
     private readonly IConfiguration _configuration;
+    private readonly ILoggingService _log;
 
-    public AuthService(UserManager<AppUser> userManager, IConfiguration configuration)
+    public AuthService(UserManager<AppUser> userManager, IConfiguration configuration, ILoggingService log)
     {
         _userManager = userManager;
         _configuration = configuration;
+        _log = log;
     }
 
     public async Task<AuthenticationResultDto> RegisterAsync(RegisterDto registerDto)
     {
-        var user = new AppUser
+        try
         {
-            UserName = registerDto.UserName,
-            Email = registerDto.Email,
-            FirstName = registerDto.FirstName,
-            LastName = registerDto.LastName
-        };
+            var user = new AppUser
+            {
+                UserName = registerDto.UserName,
+                Email = registerDto.Email,
+                FirstName = registerDto.FirstName,
+                LastName = registerDto.LastName,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                IsDeleted = false,
+                DeletedAt = null,
+                LockoutEnabled = false,
+                LockoutEnd = null,
+                NormalizedUserName = registerDto.UserName.ToUpper(),
+                NormalizedEmail = registerDto.Email.ToUpper(),
+                EmailConfirmed = false,
+                LastLoginDate = null,
+                PhoneNumber = null,
+                PhoneNumberConfirmed = false,
+                TwoFactorEnabled = false,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                PasswordHash = null,
+                AgreedToPrivacyPolicy = false,
+                AgreedToTermsAndConditions = false,
+                IsActive = true,
+                ConcurrencyStamp = Guid.NewGuid().ToString(),
+                IsSuspended = false,
+                SuspensionReason = null,
+                AccessFailedCount = 0,
+                ProfilePictureUrl = null,
+            };
+            
+            if (_configuration["AppEnvironment"] == "Development")
+            {
+                user.EmailConfirmed= true;
+                user.IsActive = true;
+            }
+            
+            var result = await _userManager.CreateAsync(user, registerDto.Password);
 
-        var result = await _userManager.CreateAsync(user, registerDto.Password);
+            if (!result.Succeeded)
+            {
+                return new AuthenticationResultDto
+                {
+                    Succeeded = false,
+                    Errors = result.Errors.Select(e => new DomainException(e.Description))
+                };
+            }
 
-        if (!result.Succeeded)
-        {
+            var tokenResult = await GenerateJwtToken(user);
+
             return new AuthenticationResultDto
             {
-                Succeeded = false,
-                Errors = result.Errors.Select(e => new DomainException(e.Description))
+                Succeeded = true,
+                Token = tokenResult.Token,
+                Expiration = tokenResult.Expiration,
             };
         }
-
-        var tokenResult = await GenerateJwtToken(user);
-
-        return new AuthenticationResultDto
+        catch (Exception e)
         {
-            Succeeded = true,
-            Token = tokenResult.Token,
-            Expiration = tokenResult.Expiration
-        };
+            _log.LogError("Error in AuthService", e);
+            return new AuthenticationResultDto{ Succeeded = false, Errors = new List<Exception> { e } };
+        }
     }
 
     public async Task<AuthenticationResultDto> LoginAsync(LoginDto loginDto)
     {
-        if (loginDto.Email == "user@example.com" || loginDto.Password == "string")
+        if ( _configuration["AppEnvironment"] == "Development" && (loginDto.Email == "user@example.com" && loginDto.Password == "string"))
         {
             var tokenResult2 = await GenerateJwtToken(new AppUser
             {
@@ -76,13 +111,14 @@ public class AuthService : IAuthService
                 Expiration = tokenResult2.Expiration
             };
         }
+        
         var user = await _userManager.FindByEmailAsync(loginDto.Email);
         if (user == null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
         {
             return new AuthenticationResultDto
             {
                 Succeeded = false,
-                Errors = new[] { new InvalidCredentialsException("Invalid credentials") },
+                Errors = new[] { new InvalidCredentialsException("Email or Password is Incorrect") },
             };
         }
 
@@ -110,7 +146,7 @@ public class AuthService : IAuthService
         claims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var credits = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var expiration = DateTime.UtcNow.AddHours(4);
 
@@ -119,7 +155,7 @@ public class AuthService : IAuthService
             audience: _configuration["Jwt:Audience"],
             claims: claims,
             expires: expiration,
-            signingCredentials: creds);
+            signingCredentials: credits);
 
         var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 

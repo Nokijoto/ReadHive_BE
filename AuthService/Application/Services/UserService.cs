@@ -1,6 +1,6 @@
 ﻿using Application.Extensions;
 using Application.Interfaces;
-using Application.Models;
+using Application.Models.Dto;
 using Domain.Interfaces;
 using Infrastructure.Interfaces;
 
@@ -74,7 +74,7 @@ public class UserService: IUserService
         }
     }
 
-    public async Task<string?> getProfilePictureUrlAsync(Guid id)
+    public async Task<string?> GetProfilePictureUrlAsync(Guid id)
     {
         try
         {
@@ -93,7 +93,7 @@ public class UserService: IUserService
         }
     }
 
-    public async Task<DateTime?> getLastLoginDateAsync(Guid id)
+    public async Task<DateTime?> GetLastLoginDateAsync(Guid id)
     {
         try
         {
@@ -112,7 +112,7 @@ public class UserService: IUserService
         }   
     }
 
-    public async Task<bool?> getAgreedToTermsAndConditionsAsync(Guid id)
+    public async Task<bool?> GetAgreedToTermsAndConditionsAsync(Guid id)
     { 
         try
         {
@@ -131,7 +131,7 @@ public class UserService: IUserService
         }
     }
 
-    public async Task<bool?> getAgreedToPrivacyPolicyAsync(Guid id)
+    public async Task<bool?> GetAgreedToPrivacyPolicyAsync(Guid id)
     {
       try
       {
@@ -150,7 +150,7 @@ public class UserService: IUserService
       }
     }
 
-    public async Task<bool?> getIsSuspendedAsync(Guid id)
+    public async Task<bool?> GetIsSuspendedAsync(Guid id)
     {
         try
         {
@@ -169,7 +169,7 @@ public class UserService: IUserService
         }   
     }
 
-    public async Task<string?> getSuspensionReasonAsync(Guid id)
+    public async Task<string?> GetSuspensionReasonAsync(Guid id)
     {
         try
         {
@@ -188,7 +188,7 @@ public class UserService: IUserService
         }   
     }
 
-    public async Task<bool?> getIsDeletedAsync(Guid id)
+    public async Task<bool?> GetIsDeletedAsync(Guid id)
     {
         try
         {
@@ -202,7 +202,7 @@ public class UserService: IUserService
         }
     }
 
-    public async Task<DateTime?> getDeletedAtAsync(Guid id)
+    public async Task<DateTime?> GetDeletedAtAsync(Guid id)
     {
         try
         {
@@ -216,7 +216,7 @@ public class UserService: IUserService
         }   
     }
 
-    public async Task<bool?> getIsActiveAsync(Guid id)
+    public async Task<bool?> GetIsActiveAsync(Guid id)
     {
         try
         {
