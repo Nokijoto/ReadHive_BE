@@ -5,24 +5,24 @@ namespace Domain.Entities;
 
 public class Book : BaseModel
 {
-    public string? Title { get; set; }
-    public string? Subtitle { get; set; }
+    public string? Title { get; init; }
+    public string? Subtitle { get; init; }
     
-    public string? Isbn { get; set; }
-    public string? Description { get; set; }
+    public string? Isbn { get; init; }
+    public string? Description { get; init; }
 
-    public string? Author { get; set; }
-    public string? Publisher { get; set; }
-    public string? Language { get; set; }
-    public string? Series { get; set; }
-    public string? NumberOfPages { get; set; }
-    public string? Dimensions { get; set; }
-    public string? Format { get; set; }
-    public string? Edition { get; set; }
-    public string? TableOfContents { get; set; }
+    public string? Author { get; init; }
+    public string? Publisher { get; init; }
+    public string? Language { get; init; }
+    public string? Series { get; init; }
+    public string? NumberOfPages { get; init; }
+    public string? Dimensions { get; init; }
+    public string? Format { get; init; }
+    public string? Edition { get; init; }
+    public string? TableOfContents { get; init; }
 
-    public BigInteger? Price { get; set; }
+    public BigInteger? Price { get; init; }
     
-    public DateTime? PublishedAt { get; set; } 
+    public DateTime? PublishedAt { get; init; } 
 
 }
