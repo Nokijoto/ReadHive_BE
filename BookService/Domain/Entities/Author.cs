@@ -4,14 +4,14 @@ namespace Domain.Entities;
 
 public class Author : BaseModel
 {
-    public string? FirstName { get; init; }
-    public string? LastName { get; init; }
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
     
-    public string? Bio { get; init; }
+    public string? Bio { get; set; }
     
-    public string? PictureUrl { get; init; } 
-    public DateTime? BirthDate { get; init; }
-    public DateTime? DeathDate { get; init; }
-    public string? Nationality { get; init; }
+    public string? PictureUrl { get; set; } 
+    public DateTime? BirthDate { get; set; }
+    public DateTime? DeathDate { get; set; }
+    public string? Nationality { get; set; }
     
 }

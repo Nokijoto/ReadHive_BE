@@ -11,6 +11,12 @@ public interface IGenreRepository
     Task<Genre?> GetByIdAsync(Guid id);
     Task<Genre?> GetByNameAsync(string name);
     
+    Task<string?> GetNameAsync(Guid id);
+    Task<string?> GetDescriptionAsync(Guid id);
+    Task<string?> GetParentGenreIdAsync(Guid id);
+    
     Task<bool> SetNameAsync(Guid id, string name);  
+    Task<bool> SetDescriptionAsync(Guid id, string description);
+    Task<bool> SetParentGenreIdAsync(Guid id, string parentGenreId);
     
 }

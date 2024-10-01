@@ -11,6 +11,11 @@ public interface IShelveRepository
     Task<Shelve?> GetByIdAsync(Guid id);
     Task<Shelve?> GetByTitleAsync(string title);
     
+    Task<string?> GetTitleAsync(Guid id);
+    Task<string?> GetDescriptionAsync(Guid id);
+    
+    
+    
     Task<bool> SetTitleAsync(Guid id, string title);
     Task<bool> SetDescriptionAsync(Guid id, string description);
 }

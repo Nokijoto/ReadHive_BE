@@ -12,6 +12,14 @@ public interface IAuthorRepository
     Task<Author?> GetByFirstNameAsync(string firstName);
     Task<Author?> GetByLastNameAsync(string lastName);
     
+    Task<string?> GetFirstNameAsync(Guid id);
+    Task<string?> GetLastNameAsync(Guid id);
+    Task<string?> GetBioAsync(Guid id);
+    Task<string?> GetPictureUrlAsync(Guid id);
+    Task<DateTime?> GetBirthDateAsync(Guid id);
+    Task<DateTime?> GetDeathDateAsync(Guid id);
+    Task<string?> GetNationalityAsync(Guid id);
+    
     Task<bool> SetFirstNameAsync(Guid id, string firstName);
     Task<bool> SetLastNameAsync(Guid id, string lastName);
     Task<bool> SetBioAsync(Guid id, string bio);

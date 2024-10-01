@@ -4,8 +4,8 @@ namespace Domain.Entities;
 
 public class Shelve : BaseModel
 {
-    public Guid? OwnerId { get; init; }
-    public string? Title { get; init; }
-    public string? Description { get; init; }
+    public Guid? OwnerId { get; set; }
+    public string? Title { get; set; }
+    public string? Description { get; set; }
 
 }

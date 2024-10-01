@@ -12,6 +12,9 @@ public interface ICategoryRepository
     Task<Category?> GetByNameAsync(string name);
     Task<Category?> GetByParentCategoryIdAsync(string parentCategoryId);
     
+    Task<string?> GetNameAsync(Guid id);
+    Task<string?> GetParentCategoryIdAsync(Guid id);
+    
     Task<bool> SetNameAsync(Guid id, string name);
     Task<bool> SetParentCategoryIdAsync(Guid id, string parentCategoryId);  
     

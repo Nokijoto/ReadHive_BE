@@ -1,48 +1,158 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Infrastructure.Repositories;
 
 public class ShelveRepository : IShelveRepository
 {
     private readonly BookDbContext _context;
+    private readonly ILogger _logger;
         
-    ShelveRepository(BookDbContext context)
+    ShelveRepository(BookDbContext context, ILogger logger)
     {
         _context = context;
+        _logger = logger;
     }
-    public Task<bool> DeleteAsync(Guid id)
+    public async Task<bool> DeleteAsync(Guid id)
     {
-        throw new NotImplementedException();
-    }
-
-    public Task<bool> AddAsync(Shelve shelve)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<bool> UpdateAsync(Shelve shelve)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<Shelve?> GetByIdAsync(Guid id)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<Shelve?> GetByTitleAsync(string title)
-    {
-        throw new NotImplementedException();
+        try
+        {
+            var item = await GetByIdAsync(id);
+            if (item == null) return false;
+            _context.Entry(item).Property(x => x.DeletedAt).CurrentValue = DateTime.Now;
+            _context.Entry(item).State = EntityState.Deleted;
+            _context.Entry(item).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error while deleting shelve");
+            throw;
+        }
     }
 
-    public Task<bool> SetTitleAsync(Guid id, string title)
+    public async Task<bool> AddAsync(Shelve shelve)
     {
-        throw new NotImplementedException();
+        try
+        {
+            await _context.Shelves.AddAsync(shelve);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error while adding shelve");
+            throw;
+        }
     }
 
-    public Task<bool> SetDescriptionAsync(Guid id, string description)
+    public async Task<bool> UpdateAsync(Shelve shelve)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var item = await _context.Shelves.FirstOrDefaultAsync(x => x.Id == shelve.Id);
+            if (item == null) return false;
+            _context.Shelves.Update(shelve);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error while updating shelve");
+            throw;
+        }
+    }
+
+    public async Task<Shelve?> GetByIdAsync(Guid id)
+    {
+        try
+        {
+            return await _context.Shelves.FirstOrDefaultAsync(x => x.Id == id);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error while getting shelve by id");
+            throw;
+        }
+    }
+
+    public async Task<Shelve?> GetByTitleAsync(string title)
+    {
+        try
+        {
+            return await _context.Shelves.FirstOrDefaultAsync(x => x.Title == title);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error while getting shelve by title");
+            throw;
+        }
+    }
+
+    public async Task<string?> GetTitleAsync(Guid id)
+    {
+        try
+        {
+            var item = await _context.Shelves.FirstOrDefaultAsync(x => x.Id == id);
+            return item?.Title??string.Empty;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error while getting shelve title by id");
+            throw;
+        }
+    }
+
+    public async Task<string?> GetDescriptionAsync(Guid id)
+    {
+        try
+        {
+            var item = await _context.Shelves.FirstOrDefaultAsync(x => x.Id == id);
+            return item?.Description??string.Empty;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error while getting shelve description by id");
+            throw;
+        }
+    }
+
+    public async Task<bool> SetTitleAsync(Guid id, string title)
+    {
+        try
+        {
+            var item = await GetByIdAsync(id);
+            if (item == null) return false;
+            _context.Entry(item).Property(x => x.Title).IsModified = true;
+            _context.Entry(item).Property(x => x.Title).CurrentValue = title;
+            await _context.SaveChangesAsync();  
+            return true;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error while setting shelve title");
+            throw;
+        }
+    }
+
+    public async Task<bool> SetDescriptionAsync(Guid id, string description)
+    {
+        try
+        {
+            var item = await GetByIdAsync(id);
+            if (item == null) return false;
+            _context.Entry(item).Property(x => x.Description).IsModified = true;
+            _context.Entry(item).Property(x => x.Description).CurrentValue = description;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error while setting shelve description");
+            throw;
+        }
     }
 }

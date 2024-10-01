@@ -15,6 +15,12 @@ public interface IBookRepository
     Task<Book?> GetByGenreIdAsync(Guid genreId);
     Task<Book?> GetByCategoryIdAsync(Guid categoryId);
     
+    Task<string?> GetTitleAsync(Guid id);
+    Task<Guid?> GetAuthorIdAsync(Guid id);
+    Task<Guid?> GetPublisherIdAsync(Guid id);
+    Task<Guid?> GetGenreIdAsync(Guid id);
+    Task<Guid?> GetCategoryIdAsync(Guid id);
+    
     Task<bool> SetTitleAsync(Guid id, string title);
     Task<bool> SetAuthorIdAsync(Guid id, Guid authorId);
     Task<bool> SetPublisherIdAsync(Guid id, Guid publisherId);

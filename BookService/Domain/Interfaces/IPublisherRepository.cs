@@ -11,6 +11,14 @@ public interface IPublisherRepository
     Task<Publisher?> GetByIdAsync(Guid id);
     Task<Publisher?> GetByNameAsync(string name);
     
+    Task<string?> GetNameAsync(Guid id);
+    Task<string?> GetDescriptionAsync(Guid id);
+    Task<string?> GetPictureUrlAsync(Guid id);
+    Task<string?> GetWebsiteUrlAsync(Guid id);
+    Task<string?> GetCountryAsync(Guid id);
+    Task<string?> GetFoundedAtAsync(Guid id);
+    Task<string?> GetFoundedByAsync(Guid id);
+    
     Task<bool> SetNameAsync(Guid id, string name);
     Task<bool> SetDescriptionAsync(Guid id, string description);
     Task<bool> SetPictureUrlAsync(Guid id, string pictureUrl);
