@@ -65,12 +65,38 @@ public class GenreRepository : IGenreRepository
             throw;
         }
     }
-
-    public async Task<Genre?> GetByIdAsync(Guid id)
+    public async Task<IEnumerable<Genre>> GetAllAsync(bool includeDeleted=false)
     {
         try
         {
-            return await _context.Genres.FirstOrDefaultAsync(x => x.Id == id);
+            var query = _context.Genres.AsQueryable();
+
+            if (!includeDeleted)
+            {
+                query = query.Where(u => u.DeletedAt == null);
+            }
+
+            return await query.ToListAsync();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error occured while getting all genres");
+            throw;
+        }
+    }
+    
+    public async Task<Genre?> GetByIdAsync(Guid id,bool includeDeleted=false)
+    {
+        try
+        {
+            var query = _context.Genres.AsQueryable();
+
+            if (!includeDeleted)
+            {
+                query = query.Where(u => u.DeletedAt == null);
+            }
+
+            return await query.FirstOrDefaultAsync(u => u.Id == id);
         }
         catch (Exception e)
         {
@@ -79,7 +105,7 @@ public class GenreRepository : IGenreRepository
         }
     }
 
-    public async Task<Genre?> GetByNameAsync(string name)
+    public async Task<Genre?> GetByNameAsync(string name,bool includeDeleted=false)
     {
         try
         {

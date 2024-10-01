@@ -8,9 +8,10 @@ public interface IAuthorRepository
     Task<bool> AddAsync(Author author);
     Task<bool> UpdateAsync(Author author);
     
-    Task<Author?> GetByIdAsync(Guid id);
-    Task<Author?> GetByFirstNameAsync(string firstName);
-    Task<Author?> GetByLastNameAsync(string lastName);
+    Task<IEnumerable<Author>> GetAllAsync(bool includeDeleted=false);
+    Task<Author?> GetByIdAsync(Guid id,bool includeDeleted=false);
+    Task<Author?> GetByFirstNameAsync(string firstName,bool includeDeleted=false);
+    Task<Author?> GetByLastNameAsync(string lastName,bool includeDeleted=false);
     
     Task<string?> GetFirstNameAsync(Guid id);
     Task<string?> GetLastNameAsync(Guid id);

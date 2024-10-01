@@ -147,8 +147,13 @@ public class AuthService : IAuthService
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]));
         var credits = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var expiration = DateTime.UtcNow.AddHours(1);
 
-        var expiration = DateTime.UtcNow.AddHours(4);
+        if(_configuration["AppEnvironment"] == "Development")
+        {
+            claims.Add(new Claim("IsDevelopment", "true"));
+            expiration = DateTime.UtcNow.AddHours(4);
+        }
 
         var token = new JwtSecurityToken(
             issuer: _configuration["Jwt:Issuer"],

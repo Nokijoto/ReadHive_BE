@@ -7,9 +7,10 @@ public interface IGenreRepository
     Task<bool> DeleteAsync(Guid id);
     Task<bool> AddAsync(Genre genre);
     Task<bool> UpdateAsync(Genre genre);
-    
-    Task<Genre?> GetByIdAsync(Guid id);
-    Task<Genre?> GetByNameAsync(string name);
+    Task<IEnumerable<Genre>> GetAllAsync(bool includeDeleted=false);
+
+    Task<Genre?> GetByIdAsync(Guid id,bool includeDeleted=false);
+    Task<Genre?> GetByNameAsync(string name,bool includeDeleted=false);
     
     Task<string?> GetNameAsync(Guid id);
     Task<string?> GetDescriptionAsync(Guid id);

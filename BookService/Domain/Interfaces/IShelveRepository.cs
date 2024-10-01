@@ -7,9 +7,10 @@ public interface IShelveRepository
     Task<bool> DeleteAsync(Guid id);
     Task<bool> AddAsync(Shelve shelve);
     Task<bool> UpdateAsync(Shelve shelve);
-    
-    Task<Shelve?> GetByIdAsync(Guid id);
-    Task<Shelve?> GetByTitleAsync(string title);
+    Task<IEnumerable<Shelve>> GetAllAsync(bool includeDeleted=false);
+
+    Task<Shelve?> GetByIdAsync(Guid id,bool includeDeleted=false);
+    Task<Shelve?> GetByTitleAsync(string title,bool includeDeleted=false);
     
     Task<string?> GetTitleAsync(Guid id);
     Task<string?> GetDescriptionAsync(Guid id);

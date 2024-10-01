@@ -71,11 +71,38 @@ public class AuthorRepository : IAuthorRepository
         }
     }
 
-    public async Task<Author?> GetByIdAsync(Guid id)
+    public async Task<IEnumerable<Author>> GetAllAsync(bool includeDeleted=false)
     {
         try
         {
-            return await _context.Authors.FirstOrDefaultAsync(x => x.Id == id);
+            var query = _context.Authors.AsQueryable();
+
+            if (!includeDeleted)
+            {
+                query = query.Where(u => u.DeletedAt == null);
+            }
+
+            return await query.ToListAsync();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error occured while getting all authors");
+            throw;
+        }
+    }
+
+    public async Task<Author?> GetByIdAsync(Guid id,bool includeDeleted=false)
+    {
+        try
+        {
+            var query = _context.Authors.AsQueryable();
+
+            if (!includeDeleted)
+            {
+                query = query.Where(u => u.DeletedAt == null);
+            }
+
+            return await query.FirstOrDefaultAsync(u => u.Id == id);
         }
         catch (Exception e)
         {
@@ -84,7 +111,7 @@ public class AuthorRepository : IAuthorRepository
         }
     }
 
-    public async Task<Author?> GetByFirstNameAsync(string firstName)
+    public async Task<Author?> GetByFirstNameAsync(string firstName,bool includeDeleted=false)
     {
         try
         {
@@ -97,7 +124,7 @@ public class AuthorRepository : IAuthorRepository
         }
     }
 
-    public async Task<Author?> GetByLastNameAsync(string lastName)
+    public async Task<Author?> GetByLastNameAsync(string lastName,bool includeDeleted=false)
     {
         try
         {

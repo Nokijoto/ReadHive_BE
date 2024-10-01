@@ -66,11 +66,38 @@ public class CategoryRepository : ICategoryRepository
         }
     }
 
-    public async Task<Category?> GetByIdAsync(Guid id)
+    public async Task<IEnumerable<Category>> GetAllAsync(bool includeDeleted=false) 
     {
         try
         {
-            return await _context.Categories.FirstOrDefaultAsync(x => x.Id == id);
+            var query = _context.Categories.AsQueryable();
+
+            if (!includeDeleted)
+            {
+                query = query.Where(u => u.DeletedAt == null);
+            }
+
+            return await query.ToListAsync();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error occured while getting all categories");
+            throw;
+        }
+    }
+    
+    public async Task<Category?> GetByIdAsync(Guid id,bool includeDeleted=false)
+    {
+        try
+        {
+            var query = _context.Categories.AsQueryable();
+
+            if (!includeDeleted)
+            {
+                query = query.Where(u => u.DeletedAt == null);
+            }
+
+            return await query.FirstOrDefaultAsync(u => u.Id == id);
         }
         catch (Exception e)
         {
@@ -79,7 +106,7 @@ public class CategoryRepository : ICategoryRepository
         }
     }
 
-    public async Task<Category?> GetByNameAsync(string name)
+    public async Task<Category?> GetByNameAsync(string name,bool includeDeleted=false)
     {
         try
         {
@@ -92,7 +119,7 @@ public class CategoryRepository : ICategoryRepository
         }
     }
 
-    public async Task<Category?> GetByParentCategoryIdAsync(string parentCategoryId)
+    public async Task<Category?> GetByParentCategoryIdAsync(string parentCategoryId,bool includeDeleted=false)
     {
         try
         {

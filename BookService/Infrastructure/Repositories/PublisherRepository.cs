@@ -65,12 +65,39 @@ public class PublisherRepository : IPublisherRepository
             throw;
         }
     }
-
-    public async Task<Publisher?> GetByIdAsync(Guid id)
+    
+    public async Task<IEnumerable<Publisher>> GetAllAsync(bool includeDeleted=false)
     {
         try
         {
-            return await _context.Publishers.FirstOrDefaultAsync(x => x.Id == id);
+            var query = _context.Publishers.AsQueryable();
+
+            if (!includeDeleted)
+            {
+                query = query.Where(u => u.DeletedAt == null);
+            }
+
+            return await query.ToListAsync();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error occured while getting all publishers");
+            throw;
+        }
+    }
+
+    public async Task<Publisher?> GetByIdAsync(Guid id,bool includeDeleted=false)
+    {
+        try
+        {
+            var query = _context.Publishers.AsQueryable();
+
+            if (!includeDeleted)
+            {
+                query = query.Where(u => u.DeletedAt == null);
+            }
+
+            return await query.FirstOrDefaultAsync(u => u.Id == id);
         }
         catch (Exception e)
         {
@@ -79,7 +106,7 @@ public class PublisherRepository : IPublisherRepository
         }
     }
 
-    public async Task<Publisher?> GetByNameAsync(string name)
+    public async Task<Publisher?> GetByNameAsync(string name,bool includeDeleted=false)
     {
         try
         {

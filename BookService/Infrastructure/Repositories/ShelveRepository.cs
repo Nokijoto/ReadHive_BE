@@ -65,12 +65,37 @@ public class ShelveRepository : IShelveRepository
             throw;
         }
     }
-
-    public async Task<Shelve?> GetByIdAsync(Guid id)
+    public async Task<IEnumerable<Shelve>> GetAllAsync(bool includeDeleted=false)
     {
         try
         {
-            return await _context.Shelves.FirstOrDefaultAsync(x => x.Id == id);
+            var query = _context.Shelves.AsQueryable();
+
+            if (!includeDeleted)
+            {
+                query = query.Where(u => u.DeletedAt == null);
+            }
+
+            return await query.ToListAsync();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error while getting all shelves");
+            throw;
+        }
+    }
+    public async Task<Shelve?> GetByIdAsync(Guid id,bool includeDeleted=false)
+    {
+        try
+        {
+            var query = _context.Shelves.AsQueryable();
+
+            if (!includeDeleted)
+            {
+                query = query.Where(u => u.DeletedAt == null);
+            }
+
+            return await query.FirstOrDefaultAsync(u => u.Id == id);
         }
         catch (Exception e)
         {
@@ -79,7 +104,7 @@ public class ShelveRepository : IShelveRepository
         }
     }
 
-    public async Task<Shelve?> GetByTitleAsync(string title)
+    public async Task<Shelve?> GetByTitleAsync(string title,bool includeDeleted=false)
     {
         try
         {

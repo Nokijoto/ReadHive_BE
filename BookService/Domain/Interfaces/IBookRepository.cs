@@ -7,13 +7,14 @@ public interface IBookRepository
     Task<bool> DeleteAsync(Guid id);
     Task<bool> AddAsync(Book book);
     Task<bool> UpdateAsync(Book book);
-    
-    Task<Book?> GetByIdAsync(Guid id);
-    Task<Book?> GetByTitleAsync(string title);
-    Task<Book?> GetByAuthorIdAsync(Guid authorId);
-    Task<Book?> GetByPublisherIdAsync(Guid publisherId);
-    Task<Book?> GetByGenreIdAsync(Guid genreId);
-    Task<Book?> GetByCategoryIdAsync(Guid categoryId);
+    Task<IEnumerable<Book>> GetAllAsync(bool includeDeleted=false);
+
+    Task<Book?> GetByIdAsync(Guid id,bool includeDeleted=false);
+    Task<Book?> GetByTitleAsync(string title,bool includeDeleted=false);
+    Task<Book?> GetByAuthorIdAsync(Guid authorId,bool includeDeleted=false);
+    Task<Book?> GetByPublisherIdAsync(Guid publisherId,bool includeDeleted=false);
+    Task<Book?> GetByGenreIdAsync(Guid genreId,bool includeDeleted=false);
+    Task<Book?> GetByCategoryIdAsync(Guid categoryId,bool includeDeleted=false);
     
     Task<string?> GetTitleAsync(Guid id);
     Task<Guid?> GetAuthorIdAsync(Guid id);

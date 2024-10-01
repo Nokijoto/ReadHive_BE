@@ -69,16 +69,38 @@ public class BookRepository : IBookRepository
             throw;
         }
     }
-
-    public async Task<Book?> GetByIdAsync(Guid id)
+    public async Task<IEnumerable<Book>> GetAllAsync(bool includeDeleted=false)
     {
         try
         {
-            if(id!=Guid.Empty)
+            var query = _context.Books.AsQueryable();
+
+            if (!includeDeleted)
             {
-                return await _context.Books.FirstOrDefaultAsync(x => x.Id == id);
+                query = query.Where(u => u.DeletedAt == null);
             }
-            return null;
+
+            return await query.ToListAsync();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error occured while getting all books");
+            throw;
+        }
+    }
+
+    public async Task<Book?> GetByIdAsync(Guid id,bool includeDeleted=false)
+    {
+        try
+        {
+            var query = _context.Books.AsQueryable();
+
+            if (!includeDeleted)
+            {
+                query = query.Where(u => u.DeletedAt == null);
+            }
+
+            return await query.FirstOrDefaultAsync(u => u.Id == id);
             
         }
         catch (Exception e)
@@ -88,7 +110,7 @@ public class BookRepository : IBookRepository
         }
     }
 
-    public Task<Book?> GetByTitleAsync(string? title)
+    public Task<Book?> GetByTitleAsync(string? title,bool includeDeleted=false)
     {
         try
         {
@@ -101,7 +123,7 @@ public class BookRepository : IBookRepository
         }
     }
 
-    public Task<Book?> GetByAuthorIdAsync(Guid authorId)
+    public Task<Book?> GetByAuthorIdAsync(Guid authorId,bool includeDeleted=false)
     {
         try
         {
@@ -114,7 +136,7 @@ public class BookRepository : IBookRepository
         }
     }
 
-    public Task<Book?> GetByPublisherIdAsync(Guid publisherId)
+    public Task<Book?> GetByPublisherIdAsync(Guid publisherId,bool includeDeleted=false)
     {
         try
         {
@@ -127,7 +149,7 @@ public class BookRepository : IBookRepository
         }
     }
 
-    public Task<Book?> GetByGenreIdAsync(Guid genreId)
+    public Task<Book?> GetByGenreIdAsync(Guid genreId,bool includeDeleted=false)
     {
         try
         {
@@ -140,7 +162,7 @@ public class BookRepository : IBookRepository
         }
     }
 
-    public Task<Book?> GetByCategoryIdAsync(Guid categoryId)
+    public Task<Book?> GetByCategoryIdAsync(Guid categoryId,bool includeDeleted=false)
     {
         try
         {

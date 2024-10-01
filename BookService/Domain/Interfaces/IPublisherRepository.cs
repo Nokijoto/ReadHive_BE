@@ -7,9 +7,10 @@ public interface IPublisherRepository
     Task<bool> DeleteAsync(Guid id);
     Task<bool> AddAsync(Publisher publisher);
     Task<bool> UpdateAsync(Publisher publisher);
-    
-    Task<Publisher?> GetByIdAsync(Guid id);
-    Task<Publisher?> GetByNameAsync(string name);
+    Task<IEnumerable<Publisher>> GetAllAsync(bool includeDeleted=false);
+
+    Task<Publisher?> GetByIdAsync(Guid id,bool includeDeleted=false);
+    Task<Publisher?> GetByNameAsync(string name,bool includeDeleted=false);
     
     Task<string?> GetNameAsync(Guid id);
     Task<string?> GetDescriptionAsync(Guid id);

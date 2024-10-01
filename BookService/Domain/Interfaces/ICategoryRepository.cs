@@ -7,10 +7,11 @@ public interface ICategoryRepository
     Task<bool> DeleteAsync(Guid id);
     Task<bool> AddAsync(Category category);
     Task<bool> UpdateAsync(Category category);
-    
-    Task<Category?> GetByIdAsync(Guid id);
-    Task<Category?> GetByNameAsync(string name);
-    Task<Category?> GetByParentCategoryIdAsync(string parentCategoryId);
+    Task<IEnumerable<Category>> GetAllAsync(bool includeDeleted=false);
+
+    Task<Category?> GetByIdAsync(Guid id,bool includeDeleted=false);
+    Task<Category?> GetByNameAsync(string name,bool includeDeleted=false);
+    Task<Category?> GetByParentCategoryIdAsync(string parentCategoryId,bool includeDeleted=false);
     
     Task<string?> GetNameAsync(Guid id);
     Task<string?> GetParentCategoryIdAsync(Guid id);
