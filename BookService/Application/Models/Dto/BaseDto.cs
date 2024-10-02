@@ -2,9 +2,9 @@
 
 public class BaseDto
 {
-    public readonly Guid? Id;
-    public readonly DateTime? CreatedAt;
-    public readonly DateTime? UpdatedAt;
-    public readonly DateTime? DeletedAt;
-    public readonly bool isActive;
+    public  Guid Id;
+    public  DateTime? CreatedAt;
+    public  DateTime? UpdatedAt;
+    public  DateTime? DeletedAt;
+    public  bool IsActive;
 }

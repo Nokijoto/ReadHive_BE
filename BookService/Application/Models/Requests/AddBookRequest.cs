@@ -1,10 +1,9 @@
 ﻿using System.Numerics;
 
-namespace Application.Models.Dto;
+namespace Application.Models.Requests;
 
-public class BookDto :BaseDto
+public class AddBookRequest
 {
-    
     public string? Title { get; set; }
     public string? Subtitle { get; set; }
     public string? Isbn { get; set; }
@@ -26,5 +25,4 @@ public class BookDto :BaseDto
     public Guid? GenreId { get; set; }
     
     public Guid? CategoryId { get; set; }
-   
 }
