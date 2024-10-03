@@ -1,5 +1,8 @@
 using System.Text;
+using Book.Infrastructure;
+using BookApi.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 
@@ -7,9 +10,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
-    .WriteTo.File("logs/api.log", rollingInterval: RollingInterval.Day)
+    .WriteTo.File("logs/api_.log", rollingInterval: RollingInterval.Day)
     .CreateLogger();
 
+builder.Host.UseSerilog();
 
 // Add services to the container.
 
@@ -18,7 +22,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
+builder.Services.AddDbContext<BookDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
 builder.Services.AddAuthentication(options =>
@@ -40,6 +45,7 @@ builder.Services.AddAuthentication(options =>
             ValidateLifetime = true
         };
     });
+builder.Services.AddInfrastructure();
 
 var app = builder.Build();
 
@@ -48,6 +54,16 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+using (var scope = builder.Services.BuildServiceProvider().CreateScope())
+{
+    using (var dbContext = scope.ServiceProvider.GetRequiredService<BookDbContext>())
+    {
+        if (dbContext.Database.GetPendingMigrations().Any())
+        {
+            dbContext.Database.Migrate();
+        }
+    }
 }
 
 app.UseAuthorization();

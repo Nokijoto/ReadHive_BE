@@ -14,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
-    .WriteTo.File("logs/api.log", rollingInterval: RollingInterval.Day)
+    .WriteTo.File("logs/api_.log", rollingInterval: RollingInterval.Day)
     .CreateLogger();
 
 
@@ -102,6 +102,16 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+using (var scope = builder.Services.BuildServiceProvider().CreateScope())
+{
+    using (var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>())
+    {
+        if (dbContext.Database.GetPendingMigrations().Any())
+        {
+            dbContext.Database.Migrate();
+        }
+    }
 }
 
 app.UseAuthentication();

@@ -37,8 +37,6 @@ public sealed class AuthController : ControllerBase
         }
 
         return Ok(new AuthResponse(result.Token, result.Expiration));
-        
-
     }
 
     [HttpPost("register")]

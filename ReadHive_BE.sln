@@ -6,21 +6,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthService", "AuthService\AuthService\AuthService.csproj", "{48B6A489-A846-4E67-8EBD-9E3898B9D004}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "AuthService\Domain\Domain.csproj", "{70C5A13B-8E0A-44D1-A1B4-81277458A785}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auth.Domain", "AuthService\Auth.Domain\Auth.Domain.csproj", "{70C5A13B-8E0A-44D1-A1B4-81277458A785}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "AuthService\Infrastructure\Infrastructure.csproj", "{AD9970CB-C571-47BB-9B08-9C13F3A7FFFB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auth.Infrastructure", "AuthService\Auth.Infrastructure\Auth.Infrastructure.csproj", "{AD9970CB-C571-47BB-9B08-9C13F3A7FFFB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectBase", "ProjectBase\ProjectBase.csproj", "{842E221B-A86E-4A43-B700-9303B6199AE7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "AuthService\Application\Application.csproj", "{9F1809B9-766F-46E1-ACC8-C8943763C9D8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auth.Application", "AuthService\Auth.Application\Auth.Application.csproj", "{9F1809B9-766F-46E1-ACC8-C8943763C9D8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BookService", "BookService", "{3E0C6B14-0E15-498C-8087-46447347121A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "BookService\Application\Application.csproj", "{E3B6B1EB-2D04-4F0B-A88F-55AAEBB39604}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Book.Application", "BookService\Book.Application\Book.Application.csproj", "{E3B6B1EB-2D04-4F0B-A88F-55AAEBB39604}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "BookService\Domain\Domain.csproj", "{D6154757-D59A-4847-B918-BB1490763DD6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Book.Domain", "BookService\Book.Domain\Book.Domain.csproj", "{D6154757-D59A-4847-B918-BB1490763DD6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "BookService\Infrastructure\Infrastructure.csproj", "{32F5B4FF-19D9-4DFA-B649-FC3CBA62A26A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Book.Infrastructure", "BookService\Book.Infrastructure\Book.Infrastructure.csproj", "{32F5B4FF-19D9-4DFA-B649-FC3CBA62A26A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookApi", "BookService\BookApi\BookApi.csproj", "{AC22C5C8-46A3-48E5-9EC1-13B8C46FE6D1}"
 EndProject
