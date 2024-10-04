@@ -1,11 +1,14 @@
 ﻿using Application.Models.Dto;
+using Application.Models.Responses;
+using Application.Models.Results;
 using MediatR;
 
 namespace Application.Commands.Author;
 
-public class AddAuthorCommand : IRequest<AuthorDto?>
+public class AddAuthorCommand : IRequest<ResultBase<AuthorDto?>>
 {
-    public AuthorDto AuthorDto { get; set; }
+    public AuthorDto? AuthorDto { get; set; }
+    
     public AddAuthorCommand(AuthorDto authorDto)
     {
         AuthorDto = authorDto;

@@ -1,12 +1,13 @@
 ﻿using Application.Interfaces;
 using Application.Models.Dto;
 using Application.Models.Results;
+using Application.Queries.AuthorQueries;
 using Book.Infrastructure.Interfaces;
 using MediatR;
 
-namespace Application.Queries.AuthorQueries;
+namespace Application.Handlers.Author;
 
-public class GetAuthorQueryHandler : IRequestHandler<GetAuthorQuery, GetAuthorQueryResult>
+public class GetAuthorQueryHandler : IRequestHandler<GetAuthorQuery, ResultBase<AuthorDto?>>
 {
     private readonly IAuthorService _authorService;
     private readonly ILoggingService _logger;
@@ -16,16 +17,16 @@ public class GetAuthorQueryHandler : IRequestHandler<GetAuthorQuery, GetAuthorQu
         _authorService = authorService;
         _logger = logger;
     }
-    public async Task<GetAuthorQueryResult> Handle(GetAuthorQuery request, CancellationToken cancellationToken)
+    public async Task<ResultBase<AuthorDto?>> Handle(GetAuthorQuery request, CancellationToken cancellationToken)
     {
         try
         {
             var author = await _authorService.GetAuthorAsync(request.Id);
             if (author == null)
             {
-                return new GetAuthorQueryResult(false, null, new List<string> { "Author not found" });
+                return new ResultBase<AuthorDto?>(false, null, new List<string> { "Author not found" });
             }
-            return new GetAuthorQueryResult(true, author);
+            return new ResultBase<AuthorDto?>(true, author);
         }
         catch (Exception e)
         {

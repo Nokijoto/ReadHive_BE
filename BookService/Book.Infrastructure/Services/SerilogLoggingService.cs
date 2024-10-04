@@ -17,7 +17,7 @@ public class SerilogLoggingService : ILoggingService
         _logger.Information(message);
     }
 
-    public void LogError(string message, Exception? ex)
+    public void LogError(string message, Exception? ex=null)
     {
         if (ex == null)
         {
@@ -28,4 +28,23 @@ public class SerilogLoggingService : ILoggingService
             _logger.Error(ex, message);
         }
     }
+
+    public void LogWarn(string message, Exception? ex=null)
+    {
+        if (ex == null)
+        {
+            _logger.Warning(message);
+        }
+        else
+        {
+            _logger.Warning(ex, message);
+        }
+    }
+
+    public void LogDebug(string message, Exception? ex)
+    {
+        _logger.Debug(ex, message);
+    }
+
+
 }

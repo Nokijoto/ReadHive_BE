@@ -3,59 +3,67 @@ using Application.Models.Dto;
 using Application.Models.Requests;
 using Application.Models.Responses;
 using Application.Queries.AuthorQueries;
+using Book.Infrastructure.Interfaces;
 using MediatR;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookApi.Controllers;
 
-
 public class AuthorController :BaseApiController
 {
     private readonly ISender _sender;
-    private readonly ILogger<AuthorController> _logger;
-    public AuthorController(ILogger<AuthorController> logger, ISender sender)
+    private readonly ILoggingService _logger;
+    public AuthorController(ILoggingService logger, ISender sender)
     {
         _logger = logger;
         _sender = sender;
     }
     
-    // [HttpPost("add")]
-    // public async Task<IActionResult> AddAuthor([FromBody] AddAuthorRequest request)
-    // {
-    //     try
-    //     {
-    //         var result = await _sender.Send(new AddAuthorCommand(request.AuthorDto));
-    //        if ((bool)(!result.Succeeded)!)
-    //         {
-    //             return BadRequest(new ErrorResponse(result.Errors));
-    //         }
-    //         return Ok(new BaseResponse<AuthorDto>() { Data = result, Status = "Ok" });
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         _logger.LogError(e.Message, e);
-    //         return StatusCode(500, new ErrorResponse(new List<string> { "Error while adding author" }));
-    //     }
-    // }
-    //
-    // [HttpPost("update")]
-    // public async Task<IActionResult> UpdateAuthor([FromBody] UpdateAuthorRequest request)
-    // {
-    //     try
-    //     {
-    //         var result = await _sender.Send(new UpdateAuthorCommand(request.AuthorDto));
-    //         return result != null
-    //             ? new BaseResponse<AuthorDto>() { Data = result, Status = "Ok" }
-    //             : new BaseResponse<AuthorDto>() { Status = "Error" };
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         _logger.LogError(e.Message, e);
-    //         return new BaseResponse<AuthorDto>() { Status = "Error" };
-    //     }
-    // }
-    //       
+    
+    [HttpPost("add")]
+    public async Task<IActionResult> AddAuthor([FromBody] AddRequest<AuthorDto> data)
+    {
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)).ToList();
+            return BadRequest(new ErrorResponse(errors));
+        }
+
+        try
+        {
+            var result = await _sender.Send(new AddAuthorCommand(data.Data));
+            if (result.Succeeded)
+            {
+                return StatusCode(201, new BaseResponse<AuthorDto> { Data = result.Data, Status = "Ok" });
+            }
+            return BadRequest(new ErrorResponse(result.Errors ?? new List<string>(), result.Succeeded));
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Error while adding author",e); 
+            return StatusCode(500, new ErrorResponse(new List<string> { "Error while adding author" }));
+        }
+    }
+    
+    [HttpPost("update")]
+    public async Task<IActionResult> UpdateAuthor([FromBody] UpdateRequest<AuthorDto> request)
+    {
+        try
+        {
+            var result = await _sender.Send(new UpdateAuthorCommand(request.Id, request.Data));
+            if (result.Succeeded)
+            {
+                return Ok(new BaseResponse<AuthorDto>() { Data = result.Data, Status = "Ok" });
+            }
+            return BadRequest(new ErrorResponse(result.Errors ?? new List<string>(), result.Succeeded));
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.Message, e);
+            return StatusCode(500, new ErrorResponse(new List<string> { "Error while updating author" }));
+        }
+    }
+          
     [HttpGet("get")]
     public async Task<IActionResult> GetAuthor([FromQuery] GetAuthorRequest request)
     {
@@ -93,21 +101,23 @@ public class AuthorController :BaseApiController
             return BadRequest(new ErrorResponse(new List<string> { "Error while getting author" }));
         }
     }
-    //
-    // [HttpDelete("delete")]
-    // public async Task<IActionResult> DeleteAuthor([FromQuery] DeleteAuthorRequest request)
-    // {
-    //     try
-    //     {
-    //         var result = await _sender.Send(new DeleteAuthorCommand(request.Id));
-    //         return result != null
-    //             ? new BaseResponse<bool>() { Data = result, Status = "Ok" }
-    //             : new BaseResponse<bool>() { Status = "Error" };
-    //     }
-    //     catch (Exception e)
-    //     {
-    //         _logger.LogError(e.Message, e);
-    //         return new BaseResponse<bool>() { Status = "Error" };
-    //     }
-    // }
+    
+    [HttpDelete("delete")]
+    public async Task<IActionResult> DeleteAuthor([FromQuery] DeleteAuthorRequest request)
+    {
+        try
+        {
+            var result = await _sender.Send(new DeleteAuthorCommand(request.Id));
+            if (result.Succeeded)
+            {
+                return NoContent();
+            }
+            return BadRequest(new ErrorResponse(result.Errors ?? new List<string>(), result.Succeeded));
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.Message, e);
+            return StatusCode(500, new ErrorResponse(new List<string> { "Error while deleting author" }));
+        }
+    }
 }

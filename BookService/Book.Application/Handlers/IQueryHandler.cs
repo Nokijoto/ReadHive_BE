@@ -1,6 +1,7 @@
 ﻿using Application.Models.Results;
+using Application.Queries;
 
-namespace Application.Queries;
+namespace Application.Handlers;
 
 public interface IQueryHandler<in TQuery, TResponse> 
     where TQuery : IQuery<TResponse>

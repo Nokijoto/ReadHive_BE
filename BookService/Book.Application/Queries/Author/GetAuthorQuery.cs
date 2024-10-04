@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.Queries.AuthorQueries;
 
-public class GetAuthorQuery :  IRequest<GetAuthorQueryResult>
+public class GetAuthorQuery :  IRequest<ResultBase<AuthorDto?>>
 {
     public Guid Id { get; set; }
     public GetAuthorQuery(Guid id)

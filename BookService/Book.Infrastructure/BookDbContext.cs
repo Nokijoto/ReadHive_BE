@@ -7,7 +7,7 @@ namespace Book.Infrastructure;
 public class BookDbContext : DbContext
 {
     public DbSet<Domain.Entities.Book> Books { get; set; }
-    public DbSet<Author> Authors { get; set; }
+    public DbSet<Author?> Authors { get; set; }
     public DbSet<Publisher> Publishers { get; set; }
     public DbSet<Genre> Genres { get; set; }
     public DbSet<Category> Categories { get; set; }
@@ -18,6 +18,19 @@ public class BookDbContext : DbContext
     {
     }
 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Author>()
+            .Property(a => a.BirthDate)
+            .HasConversion(
+                v => v.HasValue ? (DateTime?)v.Value.ToDateTime(new TimeOnly()) : null, 
+                v => v.HasValue ? DateOnly.FromDateTime(v.Value) : null); 
+        modelBuilder.Entity<Author>()
+            .Property(a => a.DeathDate)
+            .HasConversion(
+                v => v.HasValue ? (DateTime?)v.Value.ToDateTime(new TimeOnly()) : null, 
+                v => v.HasValue ? DateOnly.FromDateTime(v.Value) : null);
+    }
     public override int SaveChanges()
     {
         var entries = ChangeTracker.Entries()

@@ -1,5 +1,7 @@
+using Application.Exceptions;
 using Application.Interfaces;
 using Application.Models.Dto;
+using Application.Models.Results;
 using Book.Infrastructure.Interfaces;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -77,7 +79,23 @@ public class AuthorService : IAuthorService
         try
         {
             var authors = await _authorRepository.GetAllAsync();
-            return new List<AuthorDto?>(authors.Select(author => author != null ? new AuthorDto() : new AuthorDto()));
+            return new List<AuthorDto?>(authors.Select(author => author != null ?
+                new AuthorDto() 
+                {
+                    Id = author.Id,
+                    FirstName = author.FirstName,
+                    LastName = author.LastName,
+                    Nationality = author.Nationality,
+                    DeletedAt = author.DeletedAt,
+                    CreatedAt = author.CreatedAt,
+                    UpdatedAt = author.UpdatedAt,
+                    PictureUrl = author.PictureUrl,
+                    BirthDate = author.BirthDate,
+                    DeathDate = author.DeathDate,
+                    Bio = author.Bio,
+                    IsActive = author.IsActive,
+                }
+                : new AuthorDto()));
         }
         catch (Exception e)
         {
@@ -116,10 +134,14 @@ public class AuthorService : IAuthorService
         }
     }
 
-    public async Task<bool> AddAuthorAsync(AuthorDto authorDto)
+    public async Task<ResultBase<AuthorDto?>> AddAuthorAsync(AuthorDto authorDto)
     {
         try
         {
+            if (await AuthorExistsAsync(authorDto))
+            {
+                throw new ObjectAlreadyExistException("Author already exists");
+            }
             var author = new Author()
             {
                 FirstName = authorDto.FirstName,
@@ -131,15 +153,35 @@ public class AuthorService : IAuthorService
                 DeathDate = authorDto.DeathDate,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow,
+                DeletedAt = null,
+                IsActive = true,
             };
             await _authorRepository.AddAsync(author);
-            return true;
-                
+            return new ResultBase<AuthorDto?>(true, authorDto);
+        }
+        catch (ObjectAlreadyExistException e)
+        {
+            return new ResultBase<AuthorDto?>(false, null, new List<string>() { e.Message });
         }
         catch (Exception e)
         {
             _log.LogError(e.Message, e);
-            throw;
+            return new ResultBase<AuthorDto?>(false, null, new List<string>() { e.Message });
+        }
+    }
+
+    public async Task<bool> AuthorExistsAsync(AuthorDto authorName)
+    {
+        try
+        {
+            var author = await _authorRepository.GetByFirstNameAsync(authorName.FirstName);
+            var secondAuthor = await _authorRepository.GetByLastNameAsync(authorName.LastName);
+            return author != null || secondAuthor != null;
+        }
+        catch (Exception e)
+        {
+            _log.LogError(e.Message, e);
+            return false;
         }
     }
 }

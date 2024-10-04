@@ -6,5 +6,5 @@ public class BaseDto
     public  DateTime? CreatedAt;
     public  DateTime? UpdatedAt;
     public  DateTime? DeletedAt;
-    public  bool IsActive;
+    public  bool? IsActive;
 }

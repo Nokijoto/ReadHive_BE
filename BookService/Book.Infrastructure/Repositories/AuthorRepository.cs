@@ -18,60 +18,76 @@ public class AuthorRepository : IAuthorRepository
 
     public async Task<bool> DeleteAsync(Guid id)
     {
+        if (id == Guid.Empty)
+        {
+            throw new ArgumentException("Id is empty");
+        }
+
         try
         {
-            if(id==Guid.Empty)
-            {
-                throw new ArgumentException("Id is empty");
-            }
-            var author = await _context.Authors.FirstOrDefaultAsync(x => x.Id == id);
+            var author = await _context.Authors.FirstOrDefaultAsync(x => x!.Id == id);
             if (author == null) return false;
-            _context.Entry(author).Property(x => x.DeletedAt).CurrentValue = DateTime.Now;
-            _context.Entry(author).State = EntityState.Deleted;
-            _context.Entry(author).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            return true;
-        }
-        catch (Exception e)
-        {
-            _logger.LogError("Error occured while deleting author",e);
-            throw;
-        }
-    }
 
-    public async Task<bool> AddAsync(Author author)
-    {
-        try
-        {
-            await _context.Authors.AddAsync(author);
-            await _context.SaveChangesAsync();
-            return true;
-        }
-        catch (Exception e)
-        {
-            _logger.LogError("Error occured while adding author", e);
-            throw;
-        }
-    }
-
-    public async Task<bool> UpdateAsync(Author author)
-    {
-        try
-        {
-            var item = await _context.Authors.FirstOrDefaultAsync(x => x.Id == author.Id);
-            if (item == null) return false;
+            author.DeletedAt = DateTime.Today;
             _context.Authors.Update(author);
             await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception e)
         {
-            _logger.LogError("Error occured while updating author",e);
-            throw;
+            _logger.LogError("Error occurred while deleting author", e);
+            throw; 
         }
     }
 
-    public async Task<IEnumerable<Author>> GetAllAsync(bool includeDeleted=false)
+    public async Task<bool> AddAsync(Author? author)
+    {
+        if (author == null)
+        {
+            _logger.LogWarn("Attempted to add a null author.", null);
+            return false; 
+        }
+
+        try
+        {
+            await _context.Authors.AddAsync(author);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch (DbUpdateException dbEx)
+        {
+            _logger.LogError($"Database error occurred while adding author '{author.FirstName} {author.LastName}': {dbEx.Message}", dbEx);
+            return false; 
+        }
+        catch (Exception e)
+        {
+            _logger.LogError($"Error occurred while adding author '{author.FirstName} {author.LastName}': {e.Message}", e);
+            return false; 
+        }
+    }
+
+    public async Task<bool> UpdateAsync(Author? author)
+    {
+        if (author == null)
+        {
+            _logger.LogWarn("Attempted to update a null author.", null);
+            return false; 
+        }
+
+        try
+        {
+            _context.Authors.Update(author);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Error occurred while updating author", e);
+            throw; 
+        }
+    }
+
+    public async Task<IEnumerable<Author?>> GetAllAsync(bool includeDeleted = false)
     {
         try
         {
@@ -79,19 +95,19 @@ public class AuthorRepository : IAuthorRepository
 
             if (!includeDeleted)
             {
-                query = query.Where(u => u.DeletedAt == null);
+                query = query.Where(u => u!.DeletedAt == null);
             }
 
             return await query.ToListAsync();
         }
         catch (Exception e)
         {
-            _logger.LogError( "Error occured while getting all authors",e);
+            _logger.LogError("Error occurred while getting all authors", e);
             throw;
         }
     }
 
-    public async Task<Author?> GetByIdAsync(Guid id,bool includeDeleted=false)
+    public async Task<Author?> GetByIdAsync(Guid id, bool includeDeleted = false)
     {
         try
         {
@@ -99,265 +115,102 @@ public class AuthorRepository : IAuthorRepository
 
             if (!includeDeleted)
             {
-                query = query.Where(u => u.DeletedAt == null);
+                query = query.Where(u => u!.DeletedAt == null);
             }
 
-            return await query.FirstOrDefaultAsync(u => u.Id == id);
+            return await query.FirstOrDefaultAsync(u => u!.Id == id);
         }
         catch (Exception e)
         {
-            _logger.LogError( "Error occured while getting author by id",e);
+            _logger.LogError("Error occurred while getting author by id", e);
             throw;
         }
     }
 
-    public async Task<Author?> GetByFirstNameAsync(string firstName,bool includeDeleted=false)
+    public async Task<Author?> GetByFirstNameAsync(string? firstName, bool includeDeleted = false)
     {
         try
         {
-            return await _context.Authors.FirstOrDefaultAsync(x => x.FirstName == firstName);
+            var query = _context.Authors.AsQueryable();
+
+            if (!includeDeleted)
+            {
+                query = query.Where(u => u != null && u.DeletedAt == null);
+            }
+
+            return await query.FirstOrDefaultAsync(x => x != null && x.FirstName == firstName);
         }
         catch (Exception e)
         {
-            _logger.LogError( "Error occured while getting author by first name",e);
+            _logger.LogError("Error occurred while getting author by first name", e);
             throw;
         }
     }
 
-    public async Task<Author?> GetByLastNameAsync(string lastName,bool includeDeleted=false)
+    public async Task<Author?> GetByLastNameAsync(string? lastName, bool includeDeleted = false)
     {
         try
         {
-            return await _context.Authors.FirstOrDefaultAsync(x => x.LastName == lastName);
+            var query = _context.Authors.AsQueryable();
+
+            if (!includeDeleted)
+            {
+                query = query.Where(u => u != null && u.DeletedAt == null);
+            }
+
+            return await query.FirstOrDefaultAsync(x => x != null && x.LastName == lastName);
         }
         catch (Exception e)
         {
-            _logger.LogError("Error occured while getting author by last name",e);
+            _logger.LogError("Error occurred while getting author by last name", e);
             throw;
         }
     }
 
-    public async Task<string?> GetFirstNameAsync(Guid id)
+    private async Task<T?> GetPropertyAsync<T>(Guid id, Func<Author, T?> propertySelector)
     {
         try
         {
-            var item = await _context.Authors.FirstOrDefaultAsync(x => x.Id == id);
-            return item?.FirstName ?? string.Empty;
+            var item = await _context.Authors.FirstOrDefaultAsync(x => x != null && x.Id == id);
+            return propertySelector(item ?? throw new InvalidOperationException());
         }
         catch (Exception e)
         {
-            _logger.LogError("Error occured while getting author first name by id",e);
+            _logger.LogError("Error occurred while getting author property", e);
             throw;
         }
     }
 
-    public async Task<string?> GetLastNameAsync(Guid id)
-    {
-        try
-        {
-            var item = await _context.Authors.FirstOrDefaultAsync(x => x.Id == id);
-            return item?.LastName ?? string.Empty;
-        }
-        catch (Exception e)
-        {
-            _logger.LogError("Error occured while getting author last name by id",e);
-            throw;
-        }
-    }
+    public Task<string?> GetFirstNameAsync(Guid id) => GetPropertyAsync(id, item => item.FirstName);
+    public Task<string?> GetLastNameAsync(Guid id) => GetPropertyAsync(id, item => item.LastName);
+    public Task<string?> GetBioAsync(Guid id) => GetPropertyAsync(id, item => item.Bio);
+    public Task<string?> GetPictureUrlAsync(Guid id) => GetPropertyAsync(id, item => item.PictureUrl);
+    public Task<DateOnly?> GetBirthDateAsync(Guid id) => GetPropertyAsync(id, item => item.BirthDate);
+    public Task<DateOnly?> GetDeathDateAsync(Guid id) => GetPropertyAsync(id, item => item.DeathDate);
+    public Task<string?> GetNationalityAsync(Guid id) => GetPropertyAsync(id, item => item.Nationality);
 
-    public async Task<string?> GetBioAsync(Guid id)
-    {
-        try
-        {
-            var item = await _context.Authors.FirstOrDefaultAsync(x => x.Id == id);
-            return item?.Bio ?? string.Empty;
-        }
-        catch (Exception e)
-        {
-            _logger.LogError("Error occured while getting author bio by id",e);
-            throw;
-        }
-    }
-
-    public async Task<string?> GetPictureUrlAsync(Guid id)
-    {
-        try
-        {
-            var item = await _context.Authors.FirstOrDefaultAsync(x => x.Id == id);
-            return item?.PictureUrl ?? string.Empty;
-        }
-        catch (Exception e)
-        {
-            _logger.LogError("Error occured while getting author picture url by id",e);
-            throw;
-        }
-    }
-
-    public async Task<DateTime?> GetBirthDateAsync(Guid id)
-    {
-        try
-        {
-            var item = await _context.Authors.FirstOrDefaultAsync(x => x.Id == id);
-            return item?.BirthDate ?? DateTime.MinValue;
-        }
-        catch (Exception e)
-        {
-            _logger.LogError("Error occured while getting author birth date by id",e);
-            throw;
-        }
-    }
-
-    public async Task<DateTime?> GetDeathDateAsync(Guid id)
-    {
-        try
-        {
-            var item = await _context.Authors.FirstOrDefaultAsync(x => x.Id == id);
-            return item?.DeathDate ?? DateTime.MinValue;
-        }
-        catch (Exception e)
-        {
-            _logger.LogError("Error occured while getting author death date by id",e);
-            throw;
-        }
-    }
-
-    public async Task<string?> GetNationalityAsync(Guid id)
-    {
-        try
-        {
-            var item = await _context.Authors.FirstOrDefaultAsync(x => x.Id == id);
-            return item?.Nationality ?? string.Empty;
-        }
-        catch (Exception e)
-        {
-            _logger.LogError("Error occured while getting author nationality by id",e);
-            throw;
-        }
-    }
-
-    public async Task<bool> SetFirstNameAsync(Guid id, string firstName)
+    private async Task<bool> SetPropertyAsync<T>(Guid id, Action<Author, T> setProperty, T value)
     {
         try
         {
             var item = await GetByIdAsync(id);
             if (item == null) return false;
-            _context.Entry(item).Property(x => x.FirstName).IsModified = true;
-            _context.Entry(item).Property(x => x.FirstName).CurrentValue = firstName;
+            setProperty(item, value);
             await _context.SaveChangesAsync();
             return true;
         }
         catch (Exception e)
         {
-            _logger.LogError("Error occured while setting author first name",e);
+            _logger.LogError("Error occurred while setting author property", e);
             throw;
         }
     }
 
-    public async Task<bool> SetLastNameAsync(Guid id, string lastName)
-    {
-        try
-        {
-            var item = await GetByIdAsync(id);
-            if (item == null) return false;
-            _context.Entry(item).Property(x => x.LastName).IsModified = true;
-            _context.Entry(item).Property(x => x.LastName).CurrentValue = lastName;
-            await _context.SaveChangesAsync();
-            return true;
-        }
-        catch (Exception e)
-        {
-            _logger.LogError("Error occured while setting author last name",e);
-            throw;
-        }
-    }
-
-    public async Task<bool> SetBioAsync(Guid id, string bio)
-    {
-        try
-        {
-            var item = await GetByIdAsync(id);
-            if (item == null) return false;
-            _context.Entry(item).Property(x => x.Bio).IsModified = true;
-            _context.Entry(item).Property(x => x.Bio).CurrentValue = bio;
-            await _context.SaveChangesAsync();
-            return true;
-        }
-        catch (Exception e)
-        {
-            _logger.LogError("Error occured while setting author bio",e);
-            throw;
-        }
-    }
-
-    public async Task<bool> SetPictureUrlAsync(Guid id, string pictureUrl)
-    {
-        try
-        {
-            var item = await GetByIdAsync(id);
-            if (item == null) return false;
-            _context.Entry(item).Property(x => x.PictureUrl).IsModified = true;
-            _context.Entry(item).Property(x => x.PictureUrl).CurrentValue = pictureUrl;
-            await _context.SaveChangesAsync();
-            return true;
-        }
-        catch (Exception e)
-        {
-            _logger.LogError("Error occured while setting author picture url",e);
-            throw;
-        }
-    }
-
-    public async Task<bool> SetBirthDateAsync(Guid id, DateTime birthDate)
-    {
-        try
-        {
-            var item = await GetByIdAsync(id);
-            if (item == null) return false;
-            _context.Entry(item).Property(x => x.BirthDate).IsModified = true;
-            _context.Entry(item).Property(x => x.BirthDate).CurrentValue = birthDate;
-            await _context.SaveChangesAsync();
-            return true;
-        }
-        catch (Exception e)
-        {
-            _logger.LogError("Error occured while setting author birth date",e);
-            throw;
-        }
-    }
-
-    public async Task<bool> SetDeathDateAsync(Guid id, DateTime deathDate)
-    {
-        try
-        {
-            var item = await GetByIdAsync(id);
-            if (item == null) return false;
-            _context.Entry(item).Property(x => x.DeathDate).IsModified = true;
-            _context.Entry(item).Property(x => x.DeathDate).CurrentValue = deathDate;
-            await _context.SaveChangesAsync();
-            return true;
-        }
-        catch (Exception e)
-        {
-            _logger.LogError("Error occured while setting author death date",e);
-            throw;
-        }
-    }
-
-    public async Task<bool> SetNationalityAsync(Guid id, string nationality)
-    {
-        try
-        {
-            var item = await GetByIdAsync(id);
-            if (item == null) return false;
-            _context.Entry(item).Property(x => x.Nationality).IsModified = true;
-            _context.Entry(item).Property(x => x.Nationality).CurrentValue = nationality;
-            await _context.SaveChangesAsync();
-            return true;
-        }
-        catch (Exception e)
-        {
-            _logger.LogError( "Error occured while setting author nationality",e);
-            throw;
-        }
-    }
+    public Task<bool> SetFirstNameAsync(Guid id, string firstName) => SetPropertyAsync(id, (author, fn) => author.FirstName = fn, firstName);
+    public Task<bool> SetLastNameAsync(Guid id, string lastName) => SetPropertyAsync(id, (author, ln) => author.LastName = ln, lastName);
+    public Task<bool> SetBioAsync(Guid id, string bio) => SetPropertyAsync(id, (author, b) => author.Bio = b, bio);
+    public Task<bool> SetPictureUrlAsync(Guid id, string pictureUrl) => SetPropertyAsync(id, (author, url) => author.PictureUrl = url, pictureUrl);
+    public Task<bool> SetBirthDateAsync(Guid id, DateOnly birthDate) => SetPropertyAsync(id, (author, bd) => author.BirthDate = bd, birthDate);
+    public Task<bool> SetDeathDateAsync(Guid id, DateOnly deathDate) => SetPropertyAsync(id, (author, dd) => author.DeathDate = dd, deathDate);
+    public Task<bool> SetNationalityAsync(Guid id, string nationality) => SetPropertyAsync(id, (author, nat) => author.Nationality = nat, nationality);
 }
