@@ -24,7 +24,7 @@ public class UpdateAuthorCommandHandler : IRequestHandler<UpdateAuthorCommand, R
             request.AuthorDto.Id = request.Id;
             _logger.LogInformation($"Updating author with id {request.Id}");
             var result = await _authorService.UpdateAuthorAsync(request.AuthorDto);
-            return new ResultBase<AuthorDto?>(true, result, null);
+            return new ResultBase<AuthorDto?>(true, result);
         }
         catch (Exception e)
         {

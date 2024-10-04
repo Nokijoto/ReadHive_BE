@@ -28,13 +28,18 @@ public class AuthorController :BaseApiController
             var errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)).ToList();
             return BadRequest(new ErrorResponse(errors));
         }
+        if (data.Data == null)
+        {
+            throw new ArgumentNullException(nameof(data.Data), "AuthorDto cannot be null");
+        }
 
         try
         {
             var result = await _sender.Send(new AddAuthorCommand(data.Data));
             if (result.Succeeded)
             {
-                return StatusCode(201, new BaseResponse<AuthorDto> { Data = result.Data, Status = "Ok" });
+                return StatusCode(201, new BaseResponse<AuthorDto> { Data = result.Data });
+                // return StatusCode(201, new BaseResponse<AuthorDto> { Data = result.Data, Status = "Ok" });
             }
             return BadRequest(new ErrorResponse(result.Errors ?? new List<string>(), result.Succeeded));
         }
@@ -50,17 +55,31 @@ public class AuthorController :BaseApiController
     {
         try
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)).ToList();
+                return BadRequest(new ErrorResponse(errors));
+            }
+            if (request.Data == null)
+            {
+                throw new ArgumentNullException(nameof(request.Data), "AuthorDto cannot be null");
+            }
+            if(request.Id == Guid.Empty)
+            {
+                throw new ArgumentException("Id cannot be empty");
+            }
             var result = await _sender.Send(new UpdateAuthorCommand(request.Id, request.Data));
             if (result.Succeeded)
             {
-                return Ok(new BaseResponse<AuthorDto>() { Data = result.Data, Status = "Ok" });
+                // return Ok(new BaseResponse<AuthorDto>() { Data = result.Data, Status = "Ok" });
+                return Ok(new BaseResponse<AuthorDto>() { Data = result.Data });
             }
             return BadRequest(new ErrorResponse(result.Errors ?? new List<string>(), result.Succeeded));
         }
         catch (Exception e)
         {
             _logger.LogError(e.Message, e);
-            return StatusCode(500, new ErrorResponse(new List<string> { "Error while updating author" }));
+            return StatusCode(500, new ErrorResponse(new List<string> { "Error while updating author" ,e.Message }));
         }
     }
           
@@ -72,7 +91,8 @@ public class AuthorController :BaseApiController
           var result = await _sender.Send(new GetAuthorQuery(request.Id));
           if (result.Succeeded)
           {
-              return Ok(new BaseResponse<AuthorDto>() { Data = result.Data, Status = "Ok" });
+              // return Ok(new BaseResponse<AuthorDto>() { Data = result.Data, Status = "Ok" });
+              return Ok(new BaseResponse<AuthorDto>() { Data = result.Data});
           }
           return NotFound(new ErrorResponse(result.Errors??new List<string>()));
       }
@@ -91,7 +111,9 @@ public class AuthorController :BaseApiController
             var result = await _sender.Send(new GetAuthorsQuery());
             if (result.Succeeded)
             {
-                return Ok(new BaseResponse<IEnumerable<AuthorDto>>() { Data = result.Data, Status = "Ok" });
+                
+                // return Ok(new BaseResponse<IEnumerable<AuthorDto>>() { Data = result.Data, Status = "Ok" });
+                return Ok(new BaseResponse<IEnumerable<AuthorDto?>>() { Data = result.Data});
             }
             return NotFound(new ErrorResponse(result.Errors??new List<string>()));
         }

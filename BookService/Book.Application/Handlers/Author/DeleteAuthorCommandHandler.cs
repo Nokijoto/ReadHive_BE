@@ -20,7 +20,7 @@ public class DeleteAuthorCommandHandler : IRequestHandler<DeleteAuthorCommand, R
             var result = await _authorService.DeleteAuthorAsync(request.Id);
             if(result)
             {
-                return new ResultBase<bool>( result, result, null);
+                return new ResultBase<bool>( result, result);
             }
             return new ResultBase<bool>(false, false, new List<string>() { "Author not found" });
         }

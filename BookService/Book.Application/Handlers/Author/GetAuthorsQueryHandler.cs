@@ -24,10 +24,6 @@ public class GetAuthorsQueryHandler : IRequestHandler<GetAuthorsQuery, ResultBas
         {
             var authors = await _authorService.GetAuthorsAsync();
             var result = new ResultBase<IEnumerable<AuthorDto?>>(true, authors);
-            if (authors == null)
-            {
-                result.Errors = new List<string> { "Author not found" };
-            }
             return result;
         }
         catch (Exception e)
