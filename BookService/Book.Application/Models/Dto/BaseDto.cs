@@ -1,4 +1,6 @@
-﻿namespace Application.Models.Dto;
+﻿using System;
+
+namespace Application.Models.Dto;
 
 public class BaseDto
 {

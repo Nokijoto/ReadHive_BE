@@ -1,4 +1,6 @@
-﻿namespace Application.Models.Requests;
+﻿using System;
+
+namespace Application.Models.Requests;
 
 public class DeleteRequest
 {

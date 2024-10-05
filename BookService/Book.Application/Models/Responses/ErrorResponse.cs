@@ -1,4 +1,7 @@
-﻿namespace Application.Models.Responses;
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace Application.Models.Responses;
 
 public class ErrorResponse
 {

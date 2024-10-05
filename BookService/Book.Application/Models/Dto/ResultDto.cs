@@ -1,4 +1,7 @@
-﻿namespace Application.Models.Dto;
+﻿using System;
+using System.Collections.Generic;
+
+namespace Application.Models.Dto;
 
 public class ResultDto<T>
 {

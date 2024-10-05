@@ -1,4 +1,6 @@
-﻿namespace Application.Models.Requests.Book;
+﻿using System;
+
+namespace Application.Models.Requests.Book;
 
 public class DeleteBookRequest
 {

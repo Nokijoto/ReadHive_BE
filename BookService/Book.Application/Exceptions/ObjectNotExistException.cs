@@ -1,4 +1,6 @@
-﻿namespace Application.Exceptions;
+﻿using System;
+
+namespace Application.Exceptions;
 
 public class ObjectNotExistException : Exception
 {

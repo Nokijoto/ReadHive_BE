@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace Application.Models.Dto;
 
 public class BookDto :BaseDto

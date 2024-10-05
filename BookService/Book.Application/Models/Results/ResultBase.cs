@@ -1,4 +1,6 @@
-﻿namespace Application.Models.Results;
+﻿using System.Collections.Generic;
+
+namespace Application.Models.Results;
 
 public class ResultBase<T>
 {

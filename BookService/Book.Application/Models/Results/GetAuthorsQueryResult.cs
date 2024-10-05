@@ -1,4 +1,5 @@
-﻿using Application.Models.Dto;
+﻿using System.Collections.Generic;
+using Application.Models.Dto;
 
 namespace Application.Models.Results;
 
