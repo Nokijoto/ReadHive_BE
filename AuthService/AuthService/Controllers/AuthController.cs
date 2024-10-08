@@ -29,14 +29,22 @@ public sealed class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        var result = await _mediator.Send( new LoginCommand(request.Email, request.Password));
-
-       if ((bool)(!result.Succeeded)!)
+        try
         {
-            return BadRequest(new ErrorResponse(result.Errors));
-        }
+            var result = await _mediator.Send(new LoginCommand(request.Email, request.Password));
 
-        return Ok(new AuthResponse(result.Token, result.Expiration));
+            if (!result.Succeeded)
+            {
+                return BadRequest(new ErrorResponse(result.Errors));
+            }
+
+            return Ok(new AuthResponse(result.Token, result.Expiration));
+        }
+        catch (Exception ex)
+        {
+            _log.LogError("An error occurred during login", ex);
+            return StatusCode(500, new ErrorResponse(new List<string> { "An unexpected error occurred." }));
+        }
     }
 
     [HttpPost("register")]
