@@ -1,16 +1,16 @@
-﻿using Domain.Entities;
+﻿using Book.Application.Models.Dto;
 
-namespace Domain.Interfaces;
+namespace Book.Domain.Interfaces;
 
 public interface IPublisherRepository
 {
     Task<bool> DeleteAsync(Guid id);
-    Task<bool> AddAsync(Publisher publisher);
-    Task<bool> UpdateAsync(Publisher publisher);
-    Task<IEnumerable<Publisher>> GetAllAsync(bool includeDeleted=false);
+    Task<bool> AddAsync(PublisherDto publisher);
+    Task<bool> UpdateAsync(PublisherDto publisher);
+    Task<IEnumerable<PublisherDto>> GetAllAsync(bool includeDeleted=false);
 
-    Task<Publisher?> GetByIdAsync(Guid id,bool includeDeleted=false);
-    Task<Publisher?> GetByNameAsync(string name,bool includeDeleted=false);
+    Task<PublisherDto?> GetByIdAsync(Guid id,bool includeDeleted=false);
+    Task<PublisherDto?> GetByNameAsync(string name,bool includeDeleted=false);
     
     Task<string?> GetNameAsync(Guid id);
     Task<string?> GetDescriptionAsync(Guid id);

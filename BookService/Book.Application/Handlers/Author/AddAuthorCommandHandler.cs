@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Application.Commands.Author;
-using Application.Interfaces;
-using Application.Models.Dto;
-using Application.Models.Results;
-using Book.Infrastructure.Interfaces;
+using Book.Application.Commands.Author;
+using Book.Application.Interfaces;
+using Book.Application.Models.Dto;
+using Book.Application.Models.Results;
 using MediatR;
+using ProjectBase.Interfaces;
 
-namespace Application.Handlers.Author;
+namespace Book.Application.Handlers.Author;
 
 public class AddAuthorCommandHandler : IRequestHandler<AddAuthorCommand, ResultBase<AuthorDto?>>
 {

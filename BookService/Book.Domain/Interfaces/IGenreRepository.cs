@@ -1,16 +1,16 @@
-﻿using Domain.Entities;
+﻿using Book.Application.Models.Dto;
 
-namespace Domain.Interfaces;
+namespace Book.Domain.Interfaces;
 
 public interface IGenreRepository
 {
     Task<bool> DeleteAsync(Guid id);
-    Task<bool> AddAsync(Genre genre);
-    Task<bool> UpdateAsync(Genre genre);
-    Task<IEnumerable<Genre>> GetAllAsync(bool includeDeleted=false);
+    Task<bool> AddAsync(GenreDto genre);
+    Task<bool> UpdateAsync(GenreDto genre);
+    Task<IEnumerable<GenreDto>> GetAllAsync(bool includeDeleted=false);
 
-    Task<Genre?> GetByIdAsync(Guid id,bool includeDeleted=false);
-    Task<Genre?> GetByNameAsync(string name,bool includeDeleted=false);
+    Task<GenreDto?> GetByIdAsync(Guid id,bool includeDeleted=false);
+    Task<GenreDto?> GetByNameAsync(string name,bool includeDeleted=false);
     
     Task<string?> GetNameAsync(Guid id);
     Task<string?> GetDescriptionAsync(Guid id);

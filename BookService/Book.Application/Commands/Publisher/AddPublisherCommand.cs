@@ -1,8 +1,8 @@
-﻿using Application.Models.Dto;
-using Application.Models.Results;
+﻿using Book.Application.Models.Dto;
+using Book.Application.Models.Results;
 using MediatR;
 
-namespace Application.Commands.Publisher;
+namespace Book.Application.Commands.Publisher;
 
 public class AddPublisherCommand : IRequest<ResultBase<PublisherDto?>>
 {

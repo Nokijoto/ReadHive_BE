@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Application.Models.Results;
+namespace Book.Application.Models.Results;
 
 public class ResultBase<T>
 {

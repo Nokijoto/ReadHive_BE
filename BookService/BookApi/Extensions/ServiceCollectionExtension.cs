@@ -1,8 +1,10 @@
-﻿using Application.Interfaces;
-using Book.Infrastructure.Interfaces;
-using Book.Infrastructure.Services;
-using Domain.Interfaces;
+﻿using Book.Application.Interfaces;
+using Book.Application.Commands.Author;
+using Book.Application.Services;
+using Book.Domain.Interfaces;
 using Book.Infrastructure.Repositories;
+using ProjectBase.Interfaces;
+using ProjectBase.Services;
 using Serilog;
 
 namespace BookApi.Extensions
@@ -19,15 +21,15 @@ namespace BookApi.Extensions
 
             // Rejestracja MediatR
             services.AddMediatR(cfg =>
-                cfg.RegisterServicesFromAssemblies(typeof(Application.Commands.Author.AddAuthorCommand).Assembly));
+                cfg.RegisterServicesFromAssemblies(typeof(AddAuthorCommand).Assembly));
 
             // Rejestracja serwisów
-            services.AddScoped<IAuthorService, Application.Services.AuthorService>();
-            services.AddScoped<IBookService, Application.Services.BookService>();
-            services.AddScoped<IShelveService, Application.Services.ShelveService>();
-            services.AddScoped<IPublisherService, Application.Services.PublisherService>();
-            services.AddScoped<IGenreService, Application.Services.GenreService>();
-            services.AddScoped<ICategoryService, Application.Services.CategoryService>();
+            services.AddScoped<IAuthorService, AuthorService>();
+            services.AddScoped<IBookService, BookService>();
+            services.AddScoped<IShelveService, ShelveService>();
+            services.AddScoped<IPublisherService, PublisherService>();
+            services.AddScoped<IGenreService, GenreService>();
+            services.AddScoped<ICategoryService, CategoryService>();
 
             // Rejestracja repozytoriów
             services.AddScoped<IAuthorRepository, AuthorRepository>();

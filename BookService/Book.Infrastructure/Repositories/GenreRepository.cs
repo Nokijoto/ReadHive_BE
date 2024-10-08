@@ -1,7 +1,9 @@
-﻿using Domain.Entities;
-using Domain.Interfaces;
-using Book.Infrastructure.Interfaces;
+﻿using Book.Application.Models.Dto;
+using Book.Domain.Entities;
+using Book.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using ProjectBase;
+using ProjectBase.Interfaces;
 
 namespace Book.Infrastructure.Repositories;
 
@@ -34,11 +36,20 @@ public class GenreRepository : IGenreRepository
         }
     }
 
-    public async Task<bool> AddAsync(Genre genre)
+    public async Task<bool> AddAsync(GenreDto genre)
     {
         try
         {
-            await _context.Genres.AddAsync(genre);
+            await _context.Genres.AddAsync(new Genre()
+            {
+                IsActive = genre.IsActive,
+                Name = genre.Name,
+                Description = genre.Description,
+                ParentGenreId = genre.ParentGenreId,
+                DeletedAt = null,
+                CreatedAt = DateTime.Now,                
+                UpdatedAt = DateTime.Now,
+            }); 
             await _context.SaveChangesAsync();
             return true;
         }
@@ -49,13 +60,19 @@ public class GenreRepository : IGenreRepository
         }
     }
 
-    public async Task<bool> UpdateAsync(Genre genre)
+    public async Task<bool> UpdateAsync(GenreDto genre)
     {
         try
         {
             var item = await _context.Genres.FirstOrDefaultAsync(x => x.Id == genre.Id);
             if (item == null) return false;
-            _context.Genres.Update(genre);
+            item.Name = genre.Name;
+            item.Description = genre.Description;
+            item.ParentGenreId = genre.ParentGenreId;            
+            item.DeletedAt = genre.DeletedAt;
+            item.UpdatedAt = DateTime.Now;
+            item.IsActive = genre.IsActive;
+            _context.Genres.Update(item);               
             await _context.SaveChangesAsync();
             return true;
         }
@@ -65,7 +82,7 @@ public class GenreRepository : IGenreRepository
             throw;
         }
     }
-    public async Task<IEnumerable<Genre>> GetAllAsync(bool includeDeleted=false)
+    public async Task<IEnumerable<GenreDto>> GetAllAsync(bool includeDeleted=false)
     {
         try
         {
@@ -75,8 +92,19 @@ public class GenreRepository : IGenreRepository
             {
                 query = query.Where(u => u.DeletedAt == null);
             }
-
-            return await query.ToListAsync();
+            var result = await query.ToListAsync();
+            return new List<GenreDto?>(result.Select(genre => genre != null
+                ? new GenreDto()
+                {
+                    Id = genre.Id,
+                    Name = genre.Name,                    
+                    Description = genre.Description,
+                    ParentGenreId = genre.ParentGenreId,
+                    DeletedAt = genre.DeletedAt,
+                    CreatedAt = genre.CreatedAt,
+                    UpdatedAt = genre.UpdatedAt,
+                    IsActive = genre.IsActive
+                }: null));
         }
         catch (Exception e)
         {
@@ -85,7 +113,7 @@ public class GenreRepository : IGenreRepository
         }
     }
     
-    public async Task<Genre?> GetByIdAsync(Guid id,bool includeDeleted=false)
+    public async Task<GenreDto?> GetByIdAsync(Guid id,bool includeDeleted=false)
     {
         try
         {
@@ -95,8 +123,20 @@ public class GenreRepository : IGenreRepository
             {
                 query = query.Where(u => u.DeletedAt == null);
             }
-
-            return await query.FirstOrDefaultAsync(u => u.Id == id);
+            var result = await query.FirstOrDefaultAsync(u => u.Id == id);
+            return result != null
+                ? new GenreDto()
+                {
+                    Id = result.Id,
+                    Name = result.Name,
+                    Description = result.Description,
+                    ParentGenreId = result.ParentGenreId,
+                    DeletedAt = result.DeletedAt,                    
+                    CreatedAt = result.CreatedAt,
+                    UpdatedAt = result.UpdatedAt,
+                    IsActive = result.IsActive
+                }   
+                : null;
         }
         catch (Exception e)
         {
@@ -105,11 +145,24 @@ public class GenreRepository : IGenreRepository
         }
     }
 
-    public async Task<Genre?> GetByNameAsync(string name,bool includeDeleted=false)
+    public async Task<GenreDto?> GetByNameAsync(string name,bool includeDeleted=false)
     {
         try
         {
-            return await _context.Genres.FirstOrDefaultAsync(x => x.Name == name);
+            var genre = await _context.Genres.FirstOrDefaultAsync(x => x.Name == name);
+            return genre != null
+                ? new GenreDto()
+                {
+                    Id = genre.Id,
+                    Name = genre.Name,
+                    Description = genre.Description,
+                    ParentGenreId = genre.ParentGenreId,
+                    DeletedAt = genre.DeletedAt,
+                    CreatedAt = genre.CreatedAt,
+                    UpdatedAt = genre.UpdatedAt,
+                    IsActive = genre.IsActive
+                }
+                : null;
         }
         catch (Exception e)
         {

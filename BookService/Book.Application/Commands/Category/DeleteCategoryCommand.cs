@@ -1,8 +1,8 @@
 ﻿using System;
-using Application.Models.Results;
+using Book.Application.Models.Results;
 using MediatR;
 
-namespace Application.Commands.Category;
+namespace Book.Application.Commands.Category;
 
 public class DeleteCategoryCommand : IRequest<ResultBase<bool>>
 {

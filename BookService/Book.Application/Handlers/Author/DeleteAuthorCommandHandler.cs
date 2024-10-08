@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Application.Commands.Author;
-using Application.Interfaces;
-using Application.Models.Results;
+using Book.Application.Commands.Author;
+using Book.Application.Interfaces;
+using Book.Application.Models.Results;
 using MediatR;
 
-namespace Application.Handlers.Author;
+namespace Book.Application.Handlers.Author;
 
 public class DeleteAuthorCommandHandler : IRequestHandler<DeleteAuthorCommand, ResultBase<bool>>
 {

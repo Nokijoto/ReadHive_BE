@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Application.Interfaces;
-using Application.Models.Dto;
-using Domain.Entities;
-using Domain.Interfaces;
-using Book.Infrastructure.Interfaces;
-using Serilog;
+using Book.Application.Interfaces;
+using Book.Application.Models.Dto;
+using Book.Application.Models.Results;
+using Book.Domain.Interfaces;
+using ProjectBase.Interfaces;
 
-namespace Application.Services;
+namespace Book.Application.Services;
 
 public class CategoryService : ICategoryService
 {
@@ -44,7 +42,7 @@ public class CategoryService : ICategoryService
         }
     }
 
-    public async Task<CategoryDto?> GetCategoryAsync(Guid id)
+    public async Task<ResultBase<CategoryDto?>> GetCategoryAsync(Guid id)
     {
         try
         {
@@ -55,15 +53,7 @@ public class CategoryService : ICategoryService
             var category = await _categoryRepository.GetByIdAsync(id);
             if (category != null)
             {
-                var categoryDto = new CategoryDto()
-                {
-                    Id = category.Id,
-                    Name = category.Name,
-                    DeletedAt = category.DeletedAt,
-                    CreatedAt = category.CreatedAt,
-                    UpdatedAt = category.UpdatedAt,
-                };
-                return categoryDto;
+                return new ResultBase<CategoryDto?>(true, category);
             }                
             return null;
         }
@@ -74,12 +64,12 @@ public class CategoryService : ICategoryService
         }
     }
 
-    public async Task<IEnumerable<CategoryDto?>> GetCategoriesAsync()
+    public async Task<ResultBase<IEnumerable<CategoryDto?>>> GetCategoriesAsync()
     {
         try
         {
             var categories = await _categoryRepository.GetAllAsync();
-            return new List<CategoryDto?>(categories.Select(category => category != null ? new CategoryDto() : new CategoryDto()));
+            return new ResultBase<IEnumerable<CategoryDto?>>(true, categories);
         }
         catch (Exception e)
         {
@@ -88,7 +78,7 @@ public class CategoryService : ICategoryService
         }
     }
 
-    public async Task<CategoryDto?> UpdateCategoryAsync(CategoryDto categoryDto)
+    public async Task<ResultBase<CategoryDto?>> UpdateCategoryAsync(CategoryDto categoryDto)
     {
         try
         {
@@ -99,9 +89,7 @@ public class CategoryService : ICategoryService
             var category = await _categoryRepository.GetByIdAsync(categoryDto.Id);
             if (category != null)
             {
-                category.Name = categoryDto.Name;
-                await _categoryRepository.UpdateAsync(category);
-                return categoryDto;
+                return new ResultBase<CategoryDto?>(true,category);
             }       
             return null;
         }
@@ -116,13 +104,8 @@ public class CategoryService : ICategoryService
     {
         try
         {
-            var category = new Category()
-            {
-                Name = categoryDto.Name,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-            };      
-            await _categoryRepository.AddAsync(category);
+            
+            await _categoryRepository.AddAsync(categoryDto);
             return true;
         }
         catch (Exception e)

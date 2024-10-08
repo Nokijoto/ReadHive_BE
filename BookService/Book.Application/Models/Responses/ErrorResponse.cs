@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Application.Models.Responses;
+namespace Book.Application.Models.Responses;
 
 public class ErrorResponse
 {

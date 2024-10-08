@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Application.Models.Dto;
+using Book.Application.Models.Dto;
+using Book.Application.Models.Results;
 
-namespace Application.Interfaces;
+namespace Book.Application.Interfaces;
 
 public interface IGenreService
 {
         
     Task<bool> DeleteGenreAsync(Guid id);
-    Task<GenreDto?> GetGenreAsync(Guid id);
-    Task<IEnumerable<GenreDto?>> GetGenreAsync();
-    Task<GenreDto?> UpdateGenreAsync(GenreDto genreDto);
+    Task<ResultBase<GenreDto?>> GetGenreAsync(Guid id);
+    Task<ResultBase<IEnumerable<GenreDto?>>> GetGenresAsync();
+    Task<ResultBase<GenreDto?>> UpdateGenreAsync(GenreDto genreDto);
     Task<bool> AddGenreAsync(GenreDto genreDto);
 }

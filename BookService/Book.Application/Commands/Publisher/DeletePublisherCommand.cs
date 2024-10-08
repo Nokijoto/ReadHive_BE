@@ -1,8 +1,8 @@
 ﻿using System;
-using Application.Models.Results;
+using Book.Application.Models.Results;
 using MediatR;
 
-namespace Application.Commands.Publisher;
+namespace Book.Application.Commands.Publisher;
 
 public class DeletePublisherCommand : IRequest<ResultBase<bool>>
 {

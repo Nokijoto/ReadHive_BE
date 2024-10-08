@@ -1,9 +1,9 @@
 using System;
-using Application.Models.Dto;
-using Application.Models.Results;
+using Book.Application.Models.Dto;
+using Book.Application.Models.Results;
 using MediatR;
 
-namespace Application.Queries.AuthorQueries;
+namespace Book.Application.Queries.AuthorQueries;
 
 public class GetAuthorQuery :  IRequest<ResultBase<AuthorDto?>>
 {

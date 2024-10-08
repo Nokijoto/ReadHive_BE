@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Application.Interfaces;
-using Application.Models.Dto;
-using Application.Models.Results;
-using Application.Queries.AuthorQueries;
-using Book.Infrastructure.Interfaces;
+using Book.Application.Interfaces;
+using Book.Application.Models.Dto;
+using Book.Application.Models.Results;
+using Book.Application.Queries.AuthorQueries;
 using MediatR;
+using ProjectBase.Interfaces;
 
-namespace Application.Handlers.Author;
+namespace Book.Application.Handlers.Author;
 
 public class GetAuthorsQueryHandler : IRequestHandler<GetAuthorsQuery, ResultBase<IEnumerable<AuthorDto?>>>
 {
@@ -27,7 +27,7 @@ public class GetAuthorsQueryHandler : IRequestHandler<GetAuthorsQuery, ResultBas
         try
         {
             var authors = await _authorService.GetAuthorsAsync();
-            var result = new ResultBase<IEnumerable<AuthorDto?>>(true, authors);
+            var result = new ResultBase<IEnumerable<AuthorDto?>>(true, authors.Data);
             return result;
         }
         catch (Exception e)

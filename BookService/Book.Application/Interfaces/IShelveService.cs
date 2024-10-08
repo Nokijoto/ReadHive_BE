@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Application.Models.Dto;
+using Book.Application.Models.Dto;
+using Book.Application.Models.Results;
 
-namespace Application.Interfaces;
+namespace Book.Application.Interfaces;
 
 public interface IShelveService
 {
     Task<bool> DeleteShelveAsync(Guid id);
-    Task<ShelveDto?> GetShelveAsync(Guid id);
-    Task<IEnumerable<ShelveDto?>> GetShelvesAsync();
-    Task<ShelveDto?> UpdateShelveAsync(ShelveDto shelveDto);
+    Task<ResultBase<ShelveDto?>> GetShelveAsync(Guid id);
+    Task<ResultBase<IEnumerable<ShelveDto?>>> GetShelvesAsync();
+    Task<ResultBase<ShelveDto?>> UpdateShelveAsync(ShelveDto shelveDto);
     Task<bool> AddShelveAsync(ShelveDto shelveDto);
 }

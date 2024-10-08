@@ -1,4 +1,4 @@
-﻿namespace Application.Models.Responses;
+﻿namespace Book.Application.Models.Responses;
 
 public class BaseResponse<T>
 {

@@ -1,7 +1,7 @@
 ﻿using System.Numerics;
 using ProjectBase.Models;
 
-namespace Domain.Entities;
+namespace Book.Domain.Entities;
 
 public class Book : BaseModel
 {

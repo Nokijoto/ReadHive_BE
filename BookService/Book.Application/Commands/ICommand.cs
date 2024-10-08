@@ -1,4 +1,4 @@
-﻿namespace Application.Commands;
+﻿namespace Book.Application.Commands;
 
 public interface ICommand : IBaseCommand
 {

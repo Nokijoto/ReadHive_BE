@@ -4,18 +4,21 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>Application</RootNamespace>
+        <RootNamespace>Book.Application</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\AuthService\Auth.Infrastructure\Auth.Infrastructure.csproj" />
-      <ProjectReference Include="..\Book.Domain\Book.Domain.csproj" />
-      <ProjectReference Include="..\Book.Infrastructure\Book.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\ProjectBase\ProjectBase.csproj" />
+        <ProjectReference Include="..\Book.Domain\Book.Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="MediatR" Version="12.4.1" />
       <PackageReference Include="MediatR.Contracts" Version="2.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Handlers\Shelve\" />
     </ItemGroup>
 
 </Project>

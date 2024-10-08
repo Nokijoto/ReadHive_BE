@@ -1,4 +1,4 @@
-namespace Book.Infrastructure.Interfaces;
+namespace ProjectBase.Interfaces;
 
 public interface ILoggingService
 {

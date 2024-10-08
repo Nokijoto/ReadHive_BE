@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Application.Interfaces;
-using Application.Models.Dto;
-using Domain.Entities;
-using Domain.Interfaces;
-using Book.Infrastructure.Interfaces;
-using Serilog;
+using Book.Application.Interfaces;
+using Book.Application.Models.Dto;
+using Book.Application.Models.Results;
+using Book.Domain.Interfaces;
+using ProjectBase.Interfaces;
 
-namespace Application.Services;
+namespace Book.Application.Services;
 
 public class GenreService : IGenreService
 {
@@ -43,7 +41,7 @@ public class GenreService : IGenreService
         }
     }
 
-    public async Task<GenreDto?> GetGenreAsync(Guid id)
+    public async Task<ResultBase<GenreDto?>> GetGenreAsync(Guid id)
     {
         try
         {
@@ -54,15 +52,7 @@ public class GenreService : IGenreService
             var genre = await _genreRepository.GetByIdAsync(id);
             if (genre != null)
             {
-                var genreDto = new GenreDto()
-                {
-                    Id = genre.Id,
-                    Name = genre.Name,
-                    DeletedAt = genre.DeletedAt,
-                    CreatedAt = genre.CreatedAt,
-                    UpdatedAt = genre.UpdatedAt,
-                };
-                return genreDto;
+                return new ResultBase<GenreDto?>(true, genre);
             }                
             return null;
         }
@@ -73,12 +63,12 @@ public class GenreService : IGenreService
         }
     }
 
-    public async Task<IEnumerable<GenreDto?>> GetGenreAsync()
+    public async Task<ResultBase<IEnumerable<GenreDto?>>> GetGenresAsync()
     {
         try
         {
-            var genres = await _genreRepository.GetAllAsync();    
-            return new List<GenreDto?>(genres.Select(genre => genre != null ? new GenreDto() : new GenreDto()));
+            var genres = await _genreRepository.GetAllAsync();
+            return new ResultBase<IEnumerable<GenreDto?>>(true, genres);
         }
         catch (Exception e)
         {
@@ -87,7 +77,7 @@ public class GenreService : IGenreService
         }
     }
 
-    public async Task<GenreDto?> UpdateGenreAsync(GenreDto genreDto)
+    public async Task<ResultBase<GenreDto?>> UpdateGenreAsync(GenreDto genreDto)
     {
         try
         {
@@ -98,9 +88,7 @@ public class GenreService : IGenreService
             var genre = await _genreRepository.GetByIdAsync(genreDto.Id);
             if (genre != null)
             {
-                genre.Name = genreDto.Name;
-                await _genreRepository.UpdateAsync(genre);
-                return genreDto;
+                return new ResultBase<GenreDto?>(true, genreDto);
             }       
             return null;
         }
@@ -115,13 +103,7 @@ public class GenreService : IGenreService
     {
         try
         {
-            var genre = new Genre()
-            {
-                Name = genreDto.Name,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-            };      
-            await _genreRepository.AddAsync(genre);
+            await _genreRepository.AddAsync(genreDto);
             return true;
         }
         catch (Exception e)

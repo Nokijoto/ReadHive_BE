@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Application.Interfaces;
-using Application.Models.Dto;
-using Domain.Entities;
-using Domain.Interfaces;
-using Book.Infrastructure.Interfaces;
-using Microsoft.Extensions.Logging;
+using Book.Application.Interfaces;
+using Book.Application.Models.Dto;
+using Book.Application.Models.Results;
+using Book.Domain.Interfaces;
+using ProjectBase.Interfaces;
 
-namespace Application.Services;
+namespace Book.Application.Services;
 
 public class PublisherService :IPublisherService
 {
@@ -44,7 +42,7 @@ public class PublisherService :IPublisherService
         }
     }
 
-    public async Task<PublisherDto?> GetPublisherAsync(Guid id)
+    public async Task<ResultBase<PublisherDto?>> GetPublisherAsync(Guid id)
     {
         try
         {
@@ -55,15 +53,7 @@ public class PublisherService :IPublisherService
             var publisher = await _publisherRepository.GetByIdAsync(id);
             if (publisher != null)
             {
-                var publisherDto = new PublisherDto()
-                {
-                    Id = publisher.Id,
-                    Name = publisher.Name,
-                    DeletedAt = publisher.DeletedAt,
-                    CreatedAt = publisher.CreatedAt,
-                    UpdatedAt = publisher.UpdatedAt,
-                };
-                return publisherDto;
+                return new ResultBase<PublisherDto?>(true , publisher);
             }                
             return null;
         }
@@ -74,12 +64,12 @@ public class PublisherService :IPublisherService
         }
     }
 
-    public async Task<IEnumerable<PublisherDto?>> GetPublishersAsync()
+    public async Task<ResultBase<IEnumerable<PublisherDto?>>> GetPublishersAsync()
     {
         try
         {
             var publishers = await _publisherRepository.GetAllAsync();
-            return new List<PublisherDto?>(publishers.Select(publisher => publisher != null ? new PublisherDto() : new PublisherDto()));
+            return new ResultBase<IEnumerable<PublisherDto?>>(true, publishers);
         }
         catch (Exception e)
         {
@@ -88,7 +78,7 @@ public class PublisherService :IPublisherService
         }
     }
 
-    public async Task<PublisherDto?> UpdatePublisherAsync(PublisherDto publisherDto)
+    public async Task<ResultBase<PublisherDto?>> UpdatePublisherAsync(PublisherDto publisherDto)
     {
         try
         {
@@ -99,9 +89,7 @@ public class PublisherService :IPublisherService
             var publisher = await _publisherRepository.GetByIdAsync(publisherDto.Id);
             if (publisher != null)
             {
-                publisher.Name = publisherDto.Name;
-                await _publisherRepository.UpdateAsync(publisher);
-                return publisherDto;
+                return new ResultBase<PublisherDto?>(true, publisher);
             }       
             return null;
         }
@@ -115,14 +103,8 @@ public class PublisherService :IPublisherService
     public async Task<bool> AddPublisherAsync(PublisherDto publisherDto)
     {
         try
-        {
-            var publisher = new Publisher()
-            {
-                Name = publisherDto.Name,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-            };      
-            await _publisherRepository.AddAsync(publisher);
+        {      
+            await _publisherRepository.AddAsync(publisherDto);
             return true;
         }
         catch (Exception e)

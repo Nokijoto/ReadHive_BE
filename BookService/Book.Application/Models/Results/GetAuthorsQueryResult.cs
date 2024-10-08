@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Application.Models.Dto;
+using Book.Application.Models.Dto;
 
-namespace Application.Models.Results;
+namespace Book.Application.Models.Results;
 
 public class GetAuthorsQueryResult
 {

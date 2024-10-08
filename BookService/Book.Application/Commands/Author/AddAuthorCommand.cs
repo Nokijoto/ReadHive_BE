@@ -1,8 +1,8 @@
-﻿using Application.Models.Dto;
-using Application.Models.Results;
+﻿using Book.Application.Models.Dto;
+using Book.Application.Models.Results;
 using MediatR;
 
-namespace Application.Commands.Author;
+namespace Book.Application.Commands.Author;
 
 public class AddAuthorCommand : IRequest<ResultBase<AuthorDto?>>
 {

@@ -1,20 +1,21 @@
-﻿using Domain.Entities;
+﻿using Book.Application.Models.Dto;
+using Book.Domain.Entities;
 
-namespace Domain.Interfaces;
+namespace Book.Domain.Interfaces;
 
 public interface IBookRepository
 {
     Task<bool> DeleteAsync(Guid id);
-    Task<bool> AddAsync(Book book);
-    Task<bool> UpdateAsync(Book book);
-    Task<IEnumerable<Book>> GetAllAsync(bool includeDeleted=false);
+    Task<bool> AddAsync(BookDto BookDto);
+    Task<bool> UpdateAsync(BookDto BookDto);
+    Task<IEnumerable<BookDto>> GetAllAsync(bool includeDeleted=false);
 
-    Task<Book?> GetByIdAsync(Guid id,bool includeDeleted=false);
-    Task<Book?> GetByTitleAsync(string title,bool includeDeleted=false);
-    Task<Book?> GetByAuthorIdAsync(Guid authorId,bool includeDeleted=false);
-    Task<Book?> GetByPublisherIdAsync(Guid publisherId,bool includeDeleted=false);
-    Task<Book?> GetByGenreIdAsync(Guid genreId,bool includeDeleted=false);
-    Task<Book?> GetByCategoryIdAsync(Guid categoryId,bool includeDeleted=false);
+    Task<BookDto?> GetByIdAsync(Guid id,bool includeDeleted=false);
+    Task<BookDto?> GetByTitleAsync(string title,bool includeDeleted=false);
+    Task<BookDto?> GetByAuthorIdAsync(Guid authorId,bool includeDeleted=false);
+    Task<BookDto?> GetByPublisherIdAsync(Guid publisherId,bool includeDeleted=false);
+    Task<BookDto?> GetByGenreIdAsync(Guid genreId,bool includeDeleted=false);
+    Task<BookDto?> GetByCategoryIdAsync(Guid categoryId,bool includeDeleted=false);
     
     Task<string?> GetTitleAsync(Guid id);
     Task<Guid?> GetAuthorIdAsync(Guid id);

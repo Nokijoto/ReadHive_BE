@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Application.Models.Requests;
+namespace Book.Application.Models.Requests;
 
 public class DeleteAuthorRequest
 {

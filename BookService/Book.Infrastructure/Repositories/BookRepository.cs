@@ -1,7 +1,10 @@
-﻿using Domain.Entities;
-using Domain.Interfaces;
-using Book.Infrastructure.Interfaces;
+﻿using Book.Application.Models.Dto;
+using Book.Domain.Interfaces;
+using Book.Domain.Entities;
+using Book.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using ProjectBase;
+using ProjectBase.Interfaces;
 
 namespace Book.Infrastructure.Repositories;
 
@@ -38,11 +41,36 @@ public class BookRepository : IBookRepository
         }
     }
 
-    public async Task<bool> AddAsync(Domain.Entities.Book book)
+    public async Task<bool> AddAsync(BookDto book)
     {
         try
-        {
-            await _context.Books.AddAsync(book);
+        {   
+            await _context.Books.AddAsync(new Domain.Entities.Book()
+            {
+                Title = book.Title,
+                Subtitle = book.Subtitle,
+                Isbn = book.Isbn,
+                Description = book.Description,
+                Author = book.Author,
+                Publisher = book.Publisher,
+                Language = book.Language,
+                Series = book.Series,
+                NumberOfPages = book.NumberOfPages,
+                Dimensions = book.Dimensions,
+                Format = book.Format,
+                Edition = book.Edition,
+                TableOfContents = book.TableOfContents,
+                Price = book.Price,
+                PublishedAt = book.PublishedAt,
+                AuthorId = book.AuthorId,
+                PublisherId = book.PublisherId,
+                GenreId = book.GenreId,
+                CategoryId = book.CategoryId,
+                DeletedAt = book.DeletedAt,
+                CreatedAt = book.CreatedAt,
+                UpdatedAt = book.UpdatedAt,
+                IsActive = book.IsActive,
+            });
             await _context.SaveChangesAsync();
             return true;
         }
@@ -53,13 +81,36 @@ public class BookRepository : IBookRepository
         }
     }
 
-    public async Task<bool> UpdateAsync(Domain.Entities.Book book)
+    public async Task<bool> UpdateAsync(BookDto book)
     {
         try
         {
             var item = await _context.Books.FirstOrDefaultAsync(x => x.Id == book.Id);
             if (item == null) return false;
-            _context.Books.Update(book);
+            item.Title = book.Title;
+            item.Subtitle = book.Subtitle;
+            item.Isbn = book.Isbn;
+            item.Description = book.Description;
+            item.Author = book.Author;
+            item.Publisher = book.Publisher;
+            item.Language = book.Language;
+            item.Series = book.Series;
+            item.NumberOfPages = book.NumberOfPages;
+            item.Dimensions = book.Dimensions;
+            item.Format = book.Format;
+            item.Edition = book.Edition;
+            item.TableOfContents = book.TableOfContents;
+            item.Price = book.Price;
+            item.PublishedAt = book.PublishedAt;
+            item.AuthorId = book.AuthorId;
+            item.PublisherId = book.PublisherId;
+            item.GenreId = book.GenreId;
+            item.CategoryId = book.CategoryId;
+            item.DeletedAt = book.DeletedAt;
+            item.CreatedAt = book.CreatedAt;
+            item.UpdatedAt = book.UpdatedAt;
+            item.IsActive = book.IsActive;
+            _context.Books.Update(item);
             await _context.SaveChangesAsync();
             return true;
         }
@@ -69,7 +120,7 @@ public class BookRepository : IBookRepository
             throw;
         }
     }
-    public async Task<IEnumerable<Domain.Entities.Book>> GetAllAsync(bool includeDeleted=false)
+    public async Task<IEnumerable<BookDto>> GetAllAsync(bool includeDeleted=false)
     {
         try
         {
@@ -79,8 +130,36 @@ public class BookRepository : IBookRepository
             {
                 query = query.Where(u => u.DeletedAt == null);
             }
-
-            return await query.ToListAsync();
+            var result = await query.ToListAsync();
+            return new List<BookDto?>(result.Select(book => book != null
+                ? new BookDto()
+                {
+                    Id = book.Id,
+                    Title = book.Title,
+                    Subtitle = book.Subtitle,
+                    Isbn = book.Isbn,
+                    Description = book.Description,
+                    Author = book.Author,
+                    Publisher = book.Publisher,
+                    Language = book.Language,
+                    Series = book.Series,
+                    NumberOfPages = book.NumberOfPages,
+                    Dimensions = book.Dimensions,
+                    Format = book.Format,
+                    Edition = book.Edition,
+                    TableOfContents = book.TableOfContents,
+                    Price = book.Price,
+                    PublishedAt = book.PublishedAt,
+                    AuthorId = book.AuthorId,
+                    PublisherId = book.PublisherId,   
+                    GenreId = book.GenreId,
+                    CategoryId = book.CategoryId,
+                    DeletedAt = book.DeletedAt,
+                    CreatedAt = book.CreatedAt,
+                    UpdatedAt = book.UpdatedAt,
+                    IsActive = book.IsActive
+                }   
+                : null));
         }
         catch (Exception e)
         {
@@ -89,7 +168,7 @@ public class BookRepository : IBookRepository
         }
     }
 
-    public async Task<Domain.Entities.Book?> GetByIdAsync(Guid id,bool includeDeleted=false)
+    public async Task<BookDto?> GetByIdAsync(Guid id,bool includeDeleted=false)
     {
         try
         {
@@ -99,9 +178,36 @@ public class BookRepository : IBookRepository
             {
                 query = query.Where(u => u.DeletedAt == null);
             }
-
-            return await query.FirstOrDefaultAsync(u => u.Id == id);
-            
+            var result = await query.FirstOrDefaultAsync(u => u.Id == id);
+            return result != null
+                ? new BookDto()
+                {
+                    Id = result.Id,
+                    Title = result.Title,
+                    Subtitle = result.Subtitle,
+                    Isbn = result.Isbn,
+                    Description = result.Description,
+                    Author = result.Author,
+                    Publisher = result.Publisher,
+                    Language = result.Language,
+                    Series = result.Series,
+                    NumberOfPages = result.NumberOfPages,
+                    Dimensions = result.Dimensions,
+                    Format = result.Format,                                        
+                    Edition = result.Edition,
+                    TableOfContents = result.TableOfContents,
+                    Price = result.Price,
+                    PublishedAt = result.PublishedAt,
+                    AuthorId = result.AuthorId,   
+                    PublisherId = result.PublisherId,
+                    GenreId = result.GenreId,
+                    CategoryId = result.CategoryId,
+                    DeletedAt = result.DeletedAt,
+                    CreatedAt = result.CreatedAt,
+                    UpdatedAt = result.UpdatedAt,   
+                    IsActive = result.IsActive
+                }
+                : null;
         }
         catch (Exception e)
         {
@@ -110,11 +216,46 @@ public class BookRepository : IBookRepository
         }
     }
 
-    public Task<Domain.Entities.Book?> GetByTitleAsync(string? title,bool includeDeleted=false)
+    public async Task<BookDto?> GetByTitleAsync(string? title,bool includeDeleted=false)
     {
         try
         {
-            return string.IsNullOrEmpty(title) ? null! : _context.Books.FirstOrDefaultAsync(x => x.Title == title);
+           if(string.IsNullOrEmpty(title))
+           {
+               return null;
+           }
+           
+           var book = await _context.Books.FirstOrDefaultAsync(x => x.Title == title);
+           
+           return book != null
+               ? new BookDto()
+               {
+                   Id = book.Id,
+                   Title = book.Title,
+                   Subtitle = book.Subtitle,
+                   Isbn = book.Isbn,
+                   Description = book.Description,
+                   Author = book.Author,
+                   Publisher = book.Publisher,
+                   Language = book.Language,
+                   Series = book.Series,
+                   NumberOfPages = book.NumberOfPages,
+                   Dimensions = book.Dimensions,
+                   Format = book.Format,
+                   Edition = book.Edition,
+                   TableOfContents = book.TableOfContents,
+                   Price = book.Price,
+                   PublishedAt = book.PublishedAt,
+                   AuthorId = book.AuthorId,   
+                   PublisherId = book.PublisherId,
+                   GenreId = book.GenreId,
+                   CategoryId = book.CategoryId,
+                   DeletedAt = book.DeletedAt,
+                   CreatedAt = book.CreatedAt,
+                   UpdatedAt = book.UpdatedAt,
+                   IsActive = book.IsActive
+               }
+               : null;
         }
         catch (Exception e)
         {
@@ -123,11 +264,46 @@ public class BookRepository : IBookRepository
         }
     }
 
-    public Task<Domain.Entities.Book?> GetByAuthorIdAsync(Guid authorId,bool includeDeleted=false)
+    public async Task<BookDto?> GetByAuthorIdAsync(Guid authorId,bool includeDeleted=false)
     {
         try
         {
-            return authorId==Guid.Empty ? null! : _context.Books.FirstOrDefaultAsync(x => x.AuthorId == authorId);
+            if(authorId==Guid.Empty)
+            {
+                return null;
+            }
+            
+            var book = await _context.Books.FirstOrDefaultAsync(x => x.AuthorId == authorId);
+
+            return book != null
+                ? new BookDto()
+                {
+                    Id = book.Id,
+                    Title = book.Title,
+                    Subtitle = book.Subtitle,
+                    Isbn = book.Isbn,
+                    Description = book.Description,
+                    Author = book.Author,
+                    Publisher = book.Publisher,
+                    Language = book.Language,
+                    Series = book.Series,
+                    NumberOfPages = book.NumberOfPages,
+                    Dimensions = book.Dimensions,
+                    Format = book.Format,
+                    Edition = book.Edition,
+                    TableOfContents = book.TableOfContents,
+                    Price = book.Price,
+                    PublishedAt = book.PublishedAt,
+                    AuthorId = book.AuthorId,
+                    PublisherId = book.PublisherId,
+                    GenreId = book.GenreId,
+                    CategoryId = book.CategoryId,
+                    DeletedAt = book.DeletedAt,
+                    CreatedAt = book.CreatedAt,
+                    UpdatedAt = book.UpdatedAt,
+                    IsActive = book.IsActive
+                }
+                : null;
         }
         catch (Exception e)
         {
@@ -136,11 +312,46 @@ public class BookRepository : IBookRepository
         }
     }
 
-    public Task<Domain.Entities.Book?> GetByPublisherIdAsync(Guid publisherId,bool includeDeleted=false)
-    {
+    public async Task<BookDto?> GetByPublisherIdAsync(Guid publisherId,bool includeDeleted=false)
+    { 
         try
         {
-            return publisherId==Guid.Empty ? null! : _context.Books.FirstOrDefaultAsync(x => x.PublisherId == publisherId);
+            if(publisherId==Guid.Empty)
+            {
+                return null;
+            }
+            
+            var book = await _context.Books.FirstOrDefaultAsync(x => x.PublisherId == publisherId);
+            
+            return book != null
+                ? new BookDto()
+                {
+                    Id = book.Id,
+                    Title = book.Title,
+                    Subtitle = book.Subtitle,
+                    Isbn = book.Isbn,
+                    Description = book.Description,
+                    Author = book.Author,
+                    Publisher = book.Publisher,
+                    Language = book.Language,
+                    Series = book.Series,
+                    NumberOfPages = book.NumberOfPages,
+                    Dimensions = book.Dimensions,
+                    Format = book.Format,
+                    Edition = book.Edition,
+                    TableOfContents = book.TableOfContents,
+                    Price = book.Price,
+                    PublishedAt = book.PublishedAt,
+                    AuthorId = book.AuthorId,   
+                    PublisherId = book.PublisherId,
+                    GenreId = book.GenreId,
+                    CategoryId = book.CategoryId,
+                    DeletedAt = book.DeletedAt,
+                    CreatedAt = book.CreatedAt,
+                    UpdatedAt = book.UpdatedAt,
+                    IsActive = book.IsActive
+                }   
+                : null; 
         }
         catch (Exception e)
         {
@@ -149,11 +360,40 @@ public class BookRepository : IBookRepository
         }
     }
 
-    public Task<Domain.Entities.Book?> GetByGenreIdAsync(Guid genreId,bool includeDeleted=false)
+    public async Task<BookDto?> GetByGenreIdAsync(Guid genreId,bool includeDeleted=false)
     {
         try
         {
-            return genreId==Guid.Empty ? null! : _context.Books.FirstOrDefaultAsync(x => x.GenreId == genreId);
+            var book = await _context.Books.FirstOrDefaultAsync(x => x.GenreId == genreId);
+            return book != null
+                ? new BookDto()
+                {
+                    Id = book.Id,
+                    Title = book.Title,
+                    Subtitle = book.Subtitle,
+                    Isbn = book.Isbn,
+                    Description = book.Description,
+                    Author = book.Author,
+                    Publisher = book.Publisher,
+                    Language = book.Language,
+                    Series = book.Series,
+                    NumberOfPages = book.NumberOfPages,
+                    Dimensions = book.Dimensions,
+                    Format = book.Format,
+                    Edition = book.Edition,
+                    TableOfContents = book.TableOfContents,
+                    Price = book.Price,
+                    PublishedAt = book.PublishedAt,
+                    AuthorId = book.AuthorId,   
+                    PublisherId = book.PublisherId,
+                    GenreId = book.GenreId,
+                    CategoryId = book.CategoryId,
+                    DeletedAt = book.DeletedAt,
+                    CreatedAt = book.CreatedAt,
+                    UpdatedAt = book.UpdatedAt,
+                    IsActive = book.IsActive
+                }
+                : null;
         }
         catch (Exception e)
         {
@@ -162,11 +402,46 @@ public class BookRepository : IBookRepository
         }
     }
 
-    public Task<Domain.Entities.Book?> GetByCategoryIdAsync(Guid categoryId,bool includeDeleted=false)
+    public async Task<BookDto?> GetByCategoryIdAsync(Guid categoryId,bool includeDeleted=false)
     {
         try
         {
-            return categoryId==Guid.Empty ? null! : _context.Books.FirstOrDefaultAsync(x => x.CategoryId == categoryId);
+            if(categoryId==Guid.Empty)
+            {
+                return null;
+            }
+            
+            var book = await _context.Books.FirstOrDefaultAsync(x => x.CategoryId == categoryId);
+            
+            return book != null
+                ? new BookDto()
+                {
+                    Id = book.Id,
+                    Title = book.Title,
+                    Subtitle = book.Subtitle,
+                    Isbn = book.Isbn,
+                    Description = book.Description,
+                    Author = book.Author,
+                    Publisher = book.Publisher,
+                    Language = book.Language,
+                    Series = book.Series,
+                    NumberOfPages = book.NumberOfPages,
+                    Dimensions = book.Dimensions,
+                    Format = book.Format,
+                    Edition = book.Edition,
+                    TableOfContents = book.TableOfContents,
+                    Price = book.Price,
+                    PublishedAt = book.PublishedAt,
+                    AuthorId = book.AuthorId,   
+                    PublisherId = book.PublisherId,
+                    GenreId = book.GenreId,
+                    CategoryId = book.CategoryId,
+                    DeletedAt = book.DeletedAt,
+                    CreatedAt = book.CreatedAt,
+                    UpdatedAt = book.UpdatedAt,
+                    IsActive = book.IsActive
+                }
+                : null;
         }
         catch (Exception e)
         {
