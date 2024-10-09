@@ -48,7 +48,7 @@ public class CategoryController : BaseApiController
         }
     }
     
-    [HttpPost("update")]
+    [HttpPut("update")]
     public async Task<IActionResult> UpdateCategory([FromBody] UpdateRequest<CategoryDto> request)
     {
         try

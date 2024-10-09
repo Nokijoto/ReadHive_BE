@@ -50,7 +50,7 @@ public class ShelveController :BaseApiController
         }
     }   
     
-    [HttpPost("update")]
+    [HttpPut("update")]
     public async Task<IActionResult> UpdateShelve([FromBody] UpdateRequest<ShelveDto> request)
     {
         try

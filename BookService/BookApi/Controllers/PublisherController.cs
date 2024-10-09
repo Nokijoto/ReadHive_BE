@@ -50,7 +50,7 @@ public class PublisherController : BaseApiController
         }
     }   
     
-    [HttpPost("update")]
+    [HttpPut("update")]
     public async Task<IActionResult> UpdatePublisher([FromBody] UpdateRequest<PublisherDto> request)
     {
         try

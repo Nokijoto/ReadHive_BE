@@ -49,7 +49,7 @@ public class GenreController : BaseApiController
         }
     }   
     
-    [HttpPost("update")]
+    [HttpPut("update")]
     public async Task<IActionResult> UpdateGenre([FromBody] UpdateRequest<GenreDto> request)
     {
         try

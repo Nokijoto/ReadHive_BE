@@ -54,7 +54,7 @@ public class BookController : BaseApiController
         }
     }
 
-    [HttpPost("update")]
+    [HttpPut("update")]
     public async Task<IActionResult> UpdateBook([FromBody] UpdateRequest<BookDto> request)
     {
         try
