@@ -1,4 +1,5 @@
 ﻿using Book.Application.Models.Dto;
+using Book.Domain.Entities;
 using Book.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using ProjectBase.Interfaces;
@@ -34,7 +35,7 @@ public class CategoryRepository : ICategoryRepository
         }
     }
 
-    public async Task<bool> AddAsync(CategoryDto category)
+    public async Task<bool> AddAsync(Category category)
     {
         try
         {
@@ -59,7 +60,7 @@ public class CategoryRepository : ICategoryRepository
         }
     }
 
-    public async Task<bool> UpdateAsync(CategoryDto category)
+    public async Task<bool> UpdateAsync(Category category)
     {
         try
         {
@@ -82,7 +83,7 @@ public class CategoryRepository : ICategoryRepository
         }
     }
 
-    public async Task<IEnumerable<CategoryDto>> GetAllAsync(bool includeDeleted=false) 
+    public async Task<IEnumerable<Category>> GetAllAsync(bool includeDeleted=false) 
     {
         try
         {
@@ -93,8 +94,8 @@ public class CategoryRepository : ICategoryRepository
                 query = query.Where(u => u.DeletedAt == null);
             }
             var result = await query.ToListAsync();
-            return new List<CategoryDto?>(result.Select(category => category != null
-                ? new CategoryDto()
+            return new List<Category?>(result.Select(category => category != null
+                ? new Category()
                 {
                     Id = category.Id,
                     Name = category.Name,
@@ -114,7 +115,7 @@ public class CategoryRepository : ICategoryRepository
         }
     }
     
-    public async Task<CategoryDto?> GetByIdAsync(Guid id,bool includeDeleted=false)
+    public async Task<Category?> GetByIdAsync(Guid id,bool includeDeleted=false)
     {
         try
         {
@@ -126,7 +127,7 @@ public class CategoryRepository : ICategoryRepository
             }
             var result = await query.FirstOrDefaultAsync(u => u.Id == id);
             return result != null
-                ? new CategoryDto()
+                ? new Category()
                 {
                     Id = result.Id,
                     Name = result.Name,
@@ -146,13 +147,13 @@ public class CategoryRepository : ICategoryRepository
         }
     }
 
-    public async Task<CategoryDto?> GetByNameAsync(string name,bool includeDeleted=false)
+    public async Task<Category?> GetByNameAsync(string name,bool includeDeleted=false)
     {
         try
         {
             var category = await _context.Categories.FirstOrDefaultAsync(x => x.Name == name);
             return category != null
-                ? new CategoryDto()
+                ? new Category()
                 {
                     Id = category.Id,
                     Name = category.Name,
@@ -172,13 +173,13 @@ public class CategoryRepository : ICategoryRepository
         }
     }
 
-    public async Task<CategoryDto?> GetByParentCategoryIdAsync(string parentCategoryId,bool includeDeleted=false)
+    public async Task<Category?> GetByParentCategoryIdAsync(string parentCategoryId,bool includeDeleted=false)
     {
         try
         {
             var category = await _context.Categories.FirstOrDefaultAsync(x => x.ParentCategoryId == parentCategoryId);
             return category != null
-                ? new CategoryDto()
+                ? new Category()
                 {
                     Id = category.Id,
                     Name = category.Name,

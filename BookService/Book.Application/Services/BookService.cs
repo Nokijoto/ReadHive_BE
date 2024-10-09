@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Book.Application.Interfaces;
+using Book.Application.Mappers;
 using Book.Application.Models.Dto;
 using Book.Application.Models.Results;
 using Book.Domain.Interfaces;
@@ -25,7 +27,7 @@ public class BookService : IBookService
         try
         {
             
-            await _bookRepository.AddAsync(bookDto);
+            await _bookRepository.AddAsync(bookDto.ToEntity());
             return true;
         }
         catch (Exception e)
@@ -35,7 +37,7 @@ public class BookService : IBookService
         }
     }
 
-    public async Task<bool> DeleteBookAsync(Guid id)
+    public async Task<bool> DeleteBookAsync(Guid? id)
     {
         try
         {
@@ -69,7 +71,7 @@ public class BookService : IBookService
             var book = await _bookRepository.GetByIdAsync(id);
             if (book!= null)
             {
-                return new ResultBase<BookDto?>(true, book);
+                return new ResultBase<BookDto?>(true, book.ToDto());
             }
             return null;
         }
@@ -85,7 +87,7 @@ public class BookService : IBookService
         try
         {
             var books = await _bookRepository.GetAllAsync();
-            return new ResultBase<IEnumerable<BookDto?>>(true, books);
+            return new ResultBase<IEnumerable<BookDto?>>(true, books.Select(book => book.ToDto()));
         }
         catch (Exception e)
         {
@@ -106,7 +108,7 @@ public class BookService : IBookService
             if (book != null)
             {
                 await _bookRepository.UpdateAsync(book);
-                return new ResultBase<BookDto?>(true, book);
+                return new ResultBase<BookDto?>(true, book.ToDto());
             }
             return null;
         }

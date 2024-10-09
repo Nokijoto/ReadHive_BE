@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Book.Application.Interfaces;
+using Book.Application.Mappers;
 using Book.Application.Models.Dto;
 using Book.Application.Models.Results;
 using Book.Domain.Interfaces;
@@ -53,7 +55,7 @@ public class PublisherService :IPublisherService
             var publisher = await _publisherRepository.GetByIdAsync(id);
             if (publisher != null)
             {
-                return new ResultBase<PublisherDto?>(true , publisher);
+                return new ResultBase<PublisherDto?>(true , publisher.ToDto());
             }                
             return null;
         }
@@ -69,7 +71,7 @@ public class PublisherService :IPublisherService
         try
         {
             var publishers = await _publisherRepository.GetAllAsync();
-            return new ResultBase<IEnumerable<PublisherDto?>>(true, publishers);
+            return new ResultBase<IEnumerable<PublisherDto?>>(true, publishers.Select(publisher => publisher.ToDto()));
         }
         catch (Exception e)
         {
@@ -89,7 +91,7 @@ public class PublisherService :IPublisherService
             var publisher = await _publisherRepository.GetByIdAsync(publisherDto.Id);
             if (publisher != null)
             {
-                return new ResultBase<PublisherDto?>(true, publisher);
+                return new ResultBase<PublisherDto?>(true, publisher.ToDto());
             }       
             return null;
         }
@@ -104,7 +106,7 @@ public class PublisherService :IPublisherService
     {
         try
         {      
-            await _publisherRepository.AddAsync(publisherDto);
+            await _publisherRepository.AddAsync(publisherDto.ToEntity());
             return true;
         }
         catch (Exception e)

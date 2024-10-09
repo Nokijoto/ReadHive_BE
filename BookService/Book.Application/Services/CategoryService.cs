@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Book.Application.Interfaces;
+using Book.Application.Mappers;
 using Book.Application.Models.Dto;
 using Book.Application.Models.Results;
 using Book.Domain.Interfaces;
@@ -53,7 +55,7 @@ public class CategoryService : ICategoryService
             var category = await _categoryRepository.GetByIdAsync(id);
             if (category != null)
             {
-                return new ResultBase<CategoryDto?>(true, category);
+                return new ResultBase<CategoryDto?>(true, category.ToDto());
             }                
             return null;
         }
@@ -69,7 +71,7 @@ public class CategoryService : ICategoryService
         try
         {
             var categories = await _categoryRepository.GetAllAsync();
-            return new ResultBase<IEnumerable<CategoryDto?>>(true, categories);
+            return new ResultBase<IEnumerable<CategoryDto?>>(true, categories.Select(category => category.ToDto()));    
         }
         catch (Exception e)
         {
@@ -89,7 +91,7 @@ public class CategoryService : ICategoryService
             var category = await _categoryRepository.GetByIdAsync(categoryDto.Id);
             if (category != null)
             {
-                return new ResultBase<CategoryDto?>(true,category);
+                return new ResultBase<CategoryDto?>(true,category.ToDto());
             }       
             return null;
         }
@@ -105,7 +107,7 @@ public class CategoryService : ICategoryService
         try
         {
             
-            await _categoryRepository.AddAsync(categoryDto);
+            await _categoryRepository.AddAsync(categoryDto.ToEntity());
             return true;
         }
         catch (Exception e)

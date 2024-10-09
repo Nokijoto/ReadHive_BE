@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Book.Application.Exceptions;
 using Book.Application.Interfaces;
+using Book.Application.Mappers;
 using Book.Application.Models.Dto;
 using Book.Application.Models.Results;
 using Book.Domain.Interfaces;
@@ -56,7 +58,7 @@ public class AuthorService : IAuthorService
             var author = await _authorRepository.GetByIdAsync(id);
             if (author != null)
             {
-                return new ResultBase<AuthorDto?>(true, author);
+                return new ResultBase<AuthorDto?>(true, author.ToDto());
             }
             return null;    
         }
@@ -72,7 +74,7 @@ public class AuthorService : IAuthorService
         try
         {
             var authors = await _authorRepository.GetAllAsync();
-            return new ResultBase<IEnumerable<AuthorDto?>>(true, authors);
+            return new ResultBase<IEnumerable<AuthorDto?>>(true, authors.Select(author => author.ToDto()));
         }
         catch (Exception e)
         {
@@ -92,7 +94,7 @@ public class AuthorService : IAuthorService
             var author = await _authorRepository.GetByIdAsync(authorDto.Id);
             if (author != null)
             {
-                return new ResultBase<AuthorDto?>(true, author);
+                return new ResultBase<AuthorDto?>(true, author.ToDto());
             }       
             return null;
         }
@@ -125,7 +127,7 @@ public class AuthorService : IAuthorService
                 DeletedAt = null,
                 IsActive = true,
             };
-            await _authorRepository.AddAsync(author);
+            await _authorRepository.AddAsync(author.ToEntity());
             return new ResultBase<AuthorDto?>(true, request);
         }
         catch (ObjectAlreadyExistException e)

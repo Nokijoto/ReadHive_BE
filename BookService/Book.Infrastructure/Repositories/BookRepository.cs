@@ -41,7 +41,7 @@ public class BookRepository : IBookRepository
         }
     }
 
-    public async Task<bool> AddAsync(BookDto book)
+    public async Task<bool> AddAsync(Domain.Entities.Book book)
     {
         try
         {   
@@ -81,7 +81,7 @@ public class BookRepository : IBookRepository
         }
     }
 
-    public async Task<bool> UpdateAsync(BookDto book)
+    public async Task<bool> UpdateAsync(Domain.Entities.Book  book)
     {
         try
         {
@@ -120,7 +120,7 @@ public class BookRepository : IBookRepository
             throw;
         }
     }
-    public async Task<IEnumerable<BookDto>> GetAllAsync(bool includeDeleted=false)
+    public async Task<IEnumerable<Domain.Entities.Book >> GetAllAsync(bool includeDeleted=false)
     {
         try
         {
@@ -131,8 +131,8 @@ public class BookRepository : IBookRepository
                 query = query.Where(u => u.DeletedAt == null);
             }
             var result = await query.ToListAsync();
-            return new List<BookDto?>(result.Select(book => book != null
-                ? new BookDto()
+            return new List<Domain.Entities.Book ?>(result.Select(book => book != null
+                ? new Domain.Entities.Book ()
                 {
                     Id = book.Id,
                     Title = book.Title,
@@ -168,7 +168,7 @@ public class BookRepository : IBookRepository
         }
     }
 
-    public async Task<BookDto?> GetByIdAsync(Guid id,bool includeDeleted=false)
+    public async Task<Domain.Entities.Book ?> GetByIdAsync(Guid? id, bool includeDeleted = false)
     {
         try
         {
@@ -180,7 +180,7 @@ public class BookRepository : IBookRepository
             }
             var result = await query.FirstOrDefaultAsync(u => u.Id == id);
             return result != null
-                ? new BookDto()
+                ? new Domain.Entities.Book ()
                 {
                     Id = result.Id,
                     Title = result.Title,
@@ -216,7 +216,7 @@ public class BookRepository : IBookRepository
         }
     }
 
-    public async Task<BookDto?> GetByTitleAsync(string? title,bool includeDeleted=false)
+    public async Task<Domain.Entities.Book ?> GetByTitleAsync(string? title,bool includeDeleted=false)
     {
         try
         {
@@ -228,7 +228,7 @@ public class BookRepository : IBookRepository
            var book = await _context.Books.FirstOrDefaultAsync(x => x.Title == title);
            
            return book != null
-               ? new BookDto()
+               ? new Domain.Entities.Book ()
                {
                    Id = book.Id,
                    Title = book.Title,
@@ -264,7 +264,7 @@ public class BookRepository : IBookRepository
         }
     }
 
-    public async Task<BookDto?> GetByAuthorIdAsync(Guid authorId,bool includeDeleted=false)
+    public async Task<Domain.Entities.Book ?> GetByAuthorIdAsync(Guid authorId,bool includeDeleted=false)
     {
         try
         {
@@ -276,7 +276,7 @@ public class BookRepository : IBookRepository
             var book = await _context.Books.FirstOrDefaultAsync(x => x.AuthorId == authorId);
 
             return book != null
-                ? new BookDto()
+                ? new Domain.Entities.Book ()
                 {
                     Id = book.Id,
                     Title = book.Title,
@@ -312,7 +312,7 @@ public class BookRepository : IBookRepository
         }
     }
 
-    public async Task<BookDto?> GetByPublisherIdAsync(Guid publisherId,bool includeDeleted=false)
+    public async Task<Domain.Entities.Book ?> GetByPublisherIdAsync(Guid publisherId,bool includeDeleted=false)
     { 
         try
         {
@@ -324,7 +324,7 @@ public class BookRepository : IBookRepository
             var book = await _context.Books.FirstOrDefaultAsync(x => x.PublisherId == publisherId);
             
             return book != null
-                ? new BookDto()
+                ? new Domain.Entities.Book ()
                 {
                     Id = book.Id,
                     Title = book.Title,
@@ -360,13 +360,13 @@ public class BookRepository : IBookRepository
         }
     }
 
-    public async Task<BookDto?> GetByGenreIdAsync(Guid genreId,bool includeDeleted=false)
+    public async Task<Domain.Entities.Book ?> GetByGenreIdAsync(Guid genreId,bool includeDeleted=false)
     {
         try
         {
             var book = await _context.Books.FirstOrDefaultAsync(x => x.GenreId == genreId);
             return book != null
-                ? new BookDto()
+                ? new Domain.Entities.Book ()
                 {
                     Id = book.Id,
                     Title = book.Title,
@@ -402,7 +402,7 @@ public class BookRepository : IBookRepository
         }
     }
 
-    public async Task<BookDto?> GetByCategoryIdAsync(Guid categoryId,bool includeDeleted=false)
+    public async Task<Domain.Entities.Book ?> GetByCategoryIdAsync(Guid categoryId,bool includeDeleted=false)
     {
         try
         {
@@ -414,7 +414,7 @@ public class BookRepository : IBookRepository
             var book = await _context.Books.FirstOrDefaultAsync(x => x.CategoryId == categoryId);
             
             return book != null
-                ? new BookDto()
+                ? new Domain.Entities.Book ()
                 {
                     Id = book.Id,
                     Title = book.Title,

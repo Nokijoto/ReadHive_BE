@@ -36,7 +36,7 @@ public class ShelveRepository : IShelveRepository
         }
     }
 
-    public async Task<bool> AddAsync(ShelveDto shelve)
+    public async Task<bool> AddAsync(Shelve shelve)
     {
         try
         {
@@ -60,7 +60,7 @@ public class ShelveRepository : IShelveRepository
         }
     }
 
-    public async Task<bool> UpdateAsync(ShelveDto shelve)
+    public async Task<bool> UpdateAsync(Shelve shelve)
     {
         try
         {
@@ -82,7 +82,7 @@ public class ShelveRepository : IShelveRepository
             throw;
         }
     }
-    public async Task<IEnumerable<ShelveDto>> GetAllAsync(bool includeDeleted=false)
+    public async Task<IEnumerable<Shelve>> GetAllAsync(bool includeDeleted=false)
     {
         try
         {
@@ -93,8 +93,8 @@ public class ShelveRepository : IShelveRepository
                 query = query.Where(u => u.DeletedAt == null);
             }
             var result = await query.ToListAsync();
-            return new List<ShelveDto?>(result.Select(shelve => shelve != null
-                ? new ShelveDto()
+            return new List<Shelve?>(result.Select(shelve => shelve != null
+                ? new Shelve()
                 {
                     Id = shelve.Id,
                     Description = shelve.Description,
@@ -113,7 +113,7 @@ public class ShelveRepository : IShelveRepository
             throw;
         }
     }
-    public async Task<ShelveDto?> GetByIdAsync(Guid id,bool includeDeleted=false)
+    public async Task<Shelve?> GetByIdAsync(Guid id,bool includeDeleted=false)
     {
         try
         {
@@ -126,7 +126,7 @@ public class ShelveRepository : IShelveRepository
 
             var result = await query.FirstOrDefaultAsync(u => u.Id == id);
             return result != null
-                ? new ShelveDto()
+                ? new Shelve()
                 {
                     Id = result.Id,
                     Description = result.Description,
@@ -146,7 +146,7 @@ public class ShelveRepository : IShelveRepository
         }
     }
 
-    public async Task<ShelveDto?> GetByTitleAsync(string title,bool includeDeleted=false)
+    public async Task<Shelve?> GetByTitleAsync(string title,bool includeDeleted=false)
     {
         try
         {
@@ -157,7 +157,7 @@ public class ShelveRepository : IShelveRepository
             
             var shelve = await _context.Shelves.FirstOrDefaultAsync(x => x.Title == title);
             return shelve != null
-                ? new ShelveDto()
+                ? new Shelve()
                 {
                     Id = shelve.Id,
                     Description = shelve.Description,

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Book.Application.Interfaces;
+using Book.Application.Mappers;
 using Book.Application.Models.Dto;
 using Book.Application.Models.Results;
 using Book.Domain.Interfaces;
@@ -53,7 +55,7 @@ public class ShelveService : IShelveService
             var shelve = await _shelveRepository.GetByIdAsync(id);
             if (shelve != null)
             {
-                return new ResultBase<ShelveDto?>(true,shelve);
+                return new ResultBase<ShelveDto?>(true,shelve.ToDto());
             }                
             return null;    
         }
@@ -69,7 +71,7 @@ public class ShelveService : IShelveService
         try
         {
             var shelves = await _shelveRepository.GetAllAsync();
-            return new ResultBase<IEnumerable<ShelveDto?>>(true,shelves);
+            return new ResultBase<IEnumerable<ShelveDto?>>(true,shelves.Select(shelve=>shelve.ToDto()));
         }
         catch (Exception e)
         {
@@ -89,7 +91,7 @@ public class ShelveService : IShelveService
             var shelve = await _shelveRepository.GetByIdAsync(shelveDto.Id);
             if (shelve != null)
             {   
-                return new ResultBase<ShelveDto?>(true,shelve);
+                return new ResultBase<ShelveDto?>(true,shelve.ToDto());
             }       
             return null;
         }
@@ -104,7 +106,7 @@ public class ShelveService : IShelveService
     {
         try
         {
-            await _shelveRepository.AddAsync(shelveDto);
+            await _shelveRepository.AddAsync(shelveDto.ToEntity());
             return true;
         }
         catch (Exception e)

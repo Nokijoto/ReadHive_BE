@@ -41,17 +41,17 @@ public class AuthorRepository : IAuthorRepository
         }
     }
 
-    public async Task<bool> AddAsync(AuthorDto? authordto)
+    public async Task<bool> AddAsync(Author author)
     {
         var item = new Author()
         {
-            FirstName = authordto.FirstName,
-            LastName = authordto.LastName,
-            Bio = authordto.Bio,
-            Nationality = authordto.Nationality,
-            PictureUrl = authordto.PictureUrl,
-            BirthDate = authordto.BirthDate,
-            DeathDate = authordto.DeathDate,
+            FirstName = author.FirstName,
+            LastName = author.LastName,
+            Bio = author.Bio,
+            Nationality = author.Nationality,
+            PictureUrl = author.PictureUrl,
+            BirthDate = author.BirthDate,
+            DeathDate = author.DeathDate,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
             DeletedAt = null,
@@ -81,22 +81,22 @@ public class AuthorRepository : IAuthorRepository
         }
     }
 
-    public async Task<bool> UpdateAsync(AuthorDto? authorDto)
+    public async Task<bool> UpdateAsync(Author? author)
     {
-        if (authorDto == null)
+        if (author == null)
         {
             _logger.LogWarn("Attempted to update a null author.", null);
             return false; 
         }
         var item = new Author()
         {
-            FirstName = authorDto.FirstName,
-            LastName = authorDto.LastName,
-            Bio = authorDto.Bio,
-            Nationality = authorDto.Nationality,
-            PictureUrl = authorDto.PictureUrl,
-            BirthDate = authorDto.BirthDate,   
-            DeathDate = authorDto.DeathDate,
+            FirstName = author.FirstName,
+            LastName = author.LastName,
+            Bio = author.Bio,
+            Nationality = author.Nationality,
+            PictureUrl = author.PictureUrl,
+            BirthDate = author.BirthDate,   
+            DeathDate = author.DeathDate,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
             DeletedAt = null,
@@ -115,7 +115,7 @@ public class AuthorRepository : IAuthorRepository
         }
     }
 
-    public async Task<IEnumerable<AuthorDto?>> GetAllAsync(bool includeDeleted = false)
+    public async Task<IEnumerable<Author?>> GetAllAsync(bool includeDeleted = false)
     {
         try
         {
@@ -127,7 +127,7 @@ public class AuthorRepository : IAuthorRepository
             }
 
             var author = await query.ToListAsync();
-            return new List<AuthorDto?>(query.Select(author => author != null ? new AuthorDto()
+            return new List<Author?>(query.Select(author => author != null ? new Author()
             {
                 Id = author.Id,
                 FirstName = author.FirstName,
@@ -141,7 +141,7 @@ public class AuthorRepository : IAuthorRepository
                 DeathDate = author.DeathDate,
                 Bio = author.Bio,
                 IsActive = author.IsActive,
-            }: new AuthorDto()
+            }: new Author()
             {
                 Id = Guid.Empty,
                 FirstName = string.Empty,
@@ -164,7 +164,7 @@ public class AuthorRepository : IAuthorRepository
         }
     }
 
-    public async Task<AuthorDto?> GetByIdAsync(Guid id, bool includeDeleted = false)
+    public async Task<Author?> GetByIdAsync(Guid id, bool includeDeleted = false)
     {
         try
         {
@@ -175,7 +175,7 @@ public class AuthorRepository : IAuthorRepository
                 query = query.Where(u => u!.DeletedAt == null);
             }
             var author =await query.FirstOrDefaultAsync(u => u!.Id == id);
-            return new AuthorDto()
+            return new Author()
             {
                 Id = author.Id,
                 FirstName = author.FirstName,
@@ -198,7 +198,7 @@ public class AuthorRepository : IAuthorRepository
         }
     }
 
-    public async Task<AuthorDto?> GetByFirstNameAsync(string? firstName, bool includeDeleted = false)
+    public async Task<Author?> GetByFirstNameAsync(string? firstName, bool includeDeleted = false)
     {
         try
         {
@@ -210,7 +210,7 @@ public class AuthorRepository : IAuthorRepository
             }
 
             var author =await query.FirstOrDefaultAsync(u => u!.FirstName == firstName);
-            return new AuthorDto()
+            return new Author()
             {
                 Id = author.Id,
                 FirstName = author.FirstName,
@@ -233,7 +233,7 @@ public class AuthorRepository : IAuthorRepository
         }
     }
 
-    public async Task<AuthorDto?> GetByLastNameAsync(string? lastName, bool includeDeleted = false)
+    public async Task<Author?> GetByLastNameAsync(string? lastName, bool includeDeleted = false)
     {
         try
         {
@@ -245,7 +245,7 @@ public class AuthorRepository : IAuthorRepository
             }
 
             var author =await query.FirstOrDefaultAsync(u => u!.LastName == lastName);
-            return new AuthorDto()
+            return new Author()
             {
                 Id = author.Id,
                 FirstName = author.FirstName,
@@ -290,7 +290,7 @@ public class AuthorRepository : IAuthorRepository
     public async Task<DateOnly?> GetDeathDateAsync(Guid id) => await GetPropertyAsync(id, item => item.DeathDate);
     public async Task<string?> GetNationalityAsync(Guid id) => await GetPropertyAsync(id, item => item.Nationality);
 
-    private async Task<bool> SetPropertyAsync<T>(Guid id, Action<AuthorDto, T> setProperty, T value)
+    private async Task<bool> SetPropertyAsync<T>(Guid id, Action<Author, T> setProperty, T value)
     {
         try
         {

@@ -35,7 +35,7 @@ public class PublisherRepository : IPublisherRepository
         }
     }
 
-    public async Task<bool> AddAsync(PublisherDto publisher)
+    public async Task<bool> AddAsync(Publisher publisher)
     {
         try
         {
@@ -63,7 +63,7 @@ public class PublisherRepository : IPublisherRepository
         }
     }
 
-    public async Task<bool> UpdateAsync(PublisherDto publisher)
+    public async Task<bool> UpdateAsync(Publisher publisher)
     {
         try
         {
@@ -90,7 +90,7 @@ public class PublisherRepository : IPublisherRepository
         }
     }
     
-    public async Task<IEnumerable<PublisherDto>> GetAllAsync(bool includeDeleted=false)
+    public async Task<IEnumerable<Publisher>> GetAllAsync(bool includeDeleted=false)
     {
         try
         {
@@ -101,8 +101,8 @@ public class PublisherRepository : IPublisherRepository
                 query = query.Where(u => u.DeletedAt == null);
             }
             var result = await query.ToListAsync();
-            return new List<PublisherDto?>(result.Select(publisher => publisher != null
-                ? new PublisherDto()
+            return new List<Publisher?>(result.Select(publisher => publisher != null
+                ? new Publisher()
                 {
                     Id = publisher.Id,
                     Name = publisher.Name,
@@ -126,7 +126,7 @@ public class PublisherRepository : IPublisherRepository
         }
     }
 
-    public async Task<PublisherDto?> GetByIdAsync(Guid id,bool includeDeleted=false)
+    public async Task<Publisher?> GetByIdAsync(Guid id,bool includeDeleted=false)
     {
         try
         {
@@ -138,7 +138,7 @@ public class PublisherRepository : IPublisherRepository
             }
             var result = await query.FirstOrDefaultAsync(u => u.Id == id);
             return result != null
-                ? new PublisherDto()
+                ? new Publisher()
                 {
                     Id = result.Id,
                     Name = result.Name,
@@ -163,13 +163,13 @@ public class PublisherRepository : IPublisherRepository
         }
     }
 
-    public async Task<PublisherDto?> GetByNameAsync(string name,bool includeDeleted=false)
+    public async Task<Publisher?> GetByNameAsync(string name,bool includeDeleted=false)
     {
         try
         {
             var publisher = await _context.Publishers.FirstOrDefaultAsync(x => x.Name == name);
             return publisher != null
-                ? new PublisherDto()
+                ? new Publisher()
                 {
                     Id = publisher.Id,
                     Name = publisher.Name,

@@ -36,7 +36,7 @@ public class GenreRepository : IGenreRepository
         }
     }
 
-    public async Task<bool> AddAsync(GenreDto genre)
+    public async Task<bool> AddAsync(Genre genre)
     {
         try
         {
@@ -60,7 +60,7 @@ public class GenreRepository : IGenreRepository
         }
     }
 
-    public async Task<bool> UpdateAsync(GenreDto genre)
+    public async Task<bool> UpdateAsync(Genre genre)
     {
         try
         {
@@ -82,7 +82,7 @@ public class GenreRepository : IGenreRepository
             throw;
         }
     }
-    public async Task<IEnumerable<GenreDto>> GetAllAsync(bool includeDeleted=false)
+    public async Task<IEnumerable<Genre>> GetAllAsync(bool includeDeleted=false)
     {
         try
         {
@@ -93,8 +93,8 @@ public class GenreRepository : IGenreRepository
                 query = query.Where(u => u.DeletedAt == null);
             }
             var result = await query.ToListAsync();
-            return new List<GenreDto?>(result.Select(genre => genre != null
-                ? new GenreDto()
+            return new List<Genre?>(result.Select(genre => genre != null
+                ? new Genre()
                 {
                     Id = genre.Id,
                     Name = genre.Name,                    
@@ -113,7 +113,7 @@ public class GenreRepository : IGenreRepository
         }
     }
     
-    public async Task<GenreDto?> GetByIdAsync(Guid id,bool includeDeleted=false)
+    public async Task<Genre?> GetByIdAsync(Guid id,bool includeDeleted=false)
     {
         try
         {
@@ -125,7 +125,7 @@ public class GenreRepository : IGenreRepository
             }
             var result = await query.FirstOrDefaultAsync(u => u.Id == id);
             return result != null
-                ? new GenreDto()
+                ? new Genre()
                 {
                     Id = result.Id,
                     Name = result.Name,
@@ -145,13 +145,13 @@ public class GenreRepository : IGenreRepository
         }
     }
 
-    public async Task<GenreDto?> GetByNameAsync(string name,bool includeDeleted=false)
+    public async Task<Genre?> GetByNameAsync(string name,bool includeDeleted=false)
     {
         try
         {
             var genre = await _context.Genres.FirstOrDefaultAsync(x => x.Name == name);
             return genre != null
-                ? new GenreDto()
+                ? new Genre()
                 {
                     Id = genre.Id,
                     Name = genre.Name,

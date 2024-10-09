@@ -1,16 +1,16 @@
-﻿using Book.Application.Models.Dto;
+﻿using Book.Domain.Entities;
 
 namespace Book.Domain.Interfaces;
 
 public interface IShelveRepository
 {
     Task<bool> DeleteAsync(Guid id);
-    Task<bool> AddAsync(ShelveDto shelve);
-    Task<bool> UpdateAsync(ShelveDto shelve);
-    Task<IEnumerable<ShelveDto>> GetAllAsync(bool includeDeleted=false);
+    Task<bool> AddAsync(Shelve shelve);
+    Task<bool> UpdateAsync(Shelve shelve);
+    Task<IEnumerable<Shelve>> GetAllAsync(bool includeDeleted=false);
 
-    Task<ShelveDto?> GetByIdAsync(Guid id,bool includeDeleted=false);
-    Task<ShelveDto?> GetByTitleAsync(string title,bool includeDeleted=false);
+    Task<Shelve?> GetByIdAsync(Guid id,bool includeDeleted=false);
+    Task<Shelve?> GetByTitleAsync(string title,bool includeDeleted=false);
     
     Task<string?> GetTitleAsync(Guid id);
     Task<string?> GetDescriptionAsync(Guid id);

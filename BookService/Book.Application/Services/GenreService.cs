@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Book.Application.Interfaces;
+using Book.Application.Mappers;
 using Book.Application.Models.Dto;
 using Book.Application.Models.Results;
 using Book.Domain.Interfaces;
@@ -52,7 +54,7 @@ public class GenreService : IGenreService
             var genre = await _genreRepository.GetByIdAsync(id);
             if (genre != null)
             {
-                return new ResultBase<GenreDto?>(true, genre);
+                return new ResultBase<GenreDto?>(true, genre.ToDto());
             }                
             return null;
         }
@@ -68,7 +70,7 @@ public class GenreService : IGenreService
         try
         {
             var genres = await _genreRepository.GetAllAsync();
-            return new ResultBase<IEnumerable<GenreDto?>>(true, genres);
+            return new ResultBase<IEnumerable<GenreDto?>>(true, genres.Select(genre => genre.ToDto())); 
         }
         catch (Exception e)
         {
@@ -103,7 +105,7 @@ public class GenreService : IGenreService
     {
         try
         {
-            await _genreRepository.AddAsync(genreDto);
+            await _genreRepository.AddAsync(genreDto.ToEntity());
             return true;
         }
         catch (Exception e)

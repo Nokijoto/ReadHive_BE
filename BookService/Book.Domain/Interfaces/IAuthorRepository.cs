@@ -1,16 +1,16 @@
-﻿using Book.Application.Models.Dto;
+﻿using Book.Domain.Entities;
 namespace Book.Domain.Interfaces;
 
 public interface IAuthorRepository
 {
     Task<bool> DeleteAsync(Guid id);
-    Task<bool> AddAsync(AuthorDto author);
-    Task<bool> UpdateAsync(AuthorDto author);
+    Task<bool> AddAsync(Author author);
+    Task<bool> UpdateAsync(Author author);
     
-    Task<IEnumerable<AuthorDto?>> GetAllAsync(bool includeDeleted=false);
-    Task<AuthorDto?> GetByIdAsync(Guid id,bool includeDeleted=false);
-    Task<AuthorDto?> GetByFirstNameAsync(string? firstName,bool includeDeleted=false);
-    Task<AuthorDto?> GetByLastNameAsync(string? lastName,bool includeDeleted=false);
+    Task<IEnumerable<Author?>> GetAllAsync(bool includeDeleted=false);
+    Task<Author?> GetByIdAsync(Guid id,bool includeDeleted=false);
+    Task<Author?> GetByFirstNameAsync(string? firstName,bool includeDeleted=false);
+    Task<Author?> GetByLastNameAsync(string? lastName,bool includeDeleted=false);
     
     Task<string?> GetFirstNameAsync(Guid id);
     Task<string?> GetLastNameAsync(Guid id);

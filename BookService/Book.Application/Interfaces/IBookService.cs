@@ -8,7 +8,7 @@ namespace Book.Application.Interfaces;
 
 public interface IBookService 
 {
-    Task<bool> DeleteBookAsync(Guid id);
+    Task<bool> DeleteBookAsync(Guid? id);
     Task<ResultBase<BookDto?>> GetBookAsync(Guid id);
     Task<ResultBase<IEnumerable<BookDto?>>> GetBooksAsync();
     Task<ResultBase<BookDto?>> UpdateBookAsync(BookDto? bookDto);
