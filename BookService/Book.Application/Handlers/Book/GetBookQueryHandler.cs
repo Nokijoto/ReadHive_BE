@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Application.Interfaces;
-using Application.Models.Dto;
-using Application.Models.Results;
-using Application.Queries.Book;
-using Book.Infrastructure.Interfaces;
+using Book.Application.Interfaces;
+using Book.Application.Models.Dto;
+using Book.Application.Models.Results;
+using Book.Application.Queries.Book;
 using MediatR;
+using ProjectBase.Interfaces;
 
-namespace Application.Handlers.Book;
+namespace  Book.Application.Handlers.Book;
 
 public class GetBookQueryHandler : IRequestHandler<GetBookQuery, ResultBase<BookDto?>>
 {
@@ -25,11 +25,11 @@ public class GetBookQueryHandler : IRequestHandler<GetBookQuery, ResultBase<Book
     {
         try
         {
-            // var result = await _bookService.GetBookAsync(request.Id);
-            // if (result.Succeeded)
-            // {
-            //     return new ResultBase<BookDto?>(true, result.Data);
-            // }
+            var book = await _bookService.GetBookAsync(request.Id);
+            if (book != null)
+            {
+                return new ResultBase<BookDto?>(true, book.Data);
+            }
             return new ResultBase<BookDto?>(false, null, new List<string> { "Book not found" });
         }
         catch (Exception e)

@@ -1,9 +1,9 @@
 ﻿using System;
-using Application.Models.Dto;
-using Application.Models.Results;
+using Book.Application.Models.Dto;
+using Book.Application.Models.Results;
 using MediatR;
 
-namespace Application.Commands.Book;
+namespace Book.Application.Commands.Book;
 
 public class UpdateBookCommand : IRequest<ResultBase<BookDto?>>
 {

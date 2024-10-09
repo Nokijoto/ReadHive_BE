@@ -1,7 +1,8 @@
-﻿using Domain.Entities;
-using Domain.Interfaces;
-using Book.Infrastructure.Interfaces;
+﻿using Book.Application.Models.Dto;
+using Book.Domain.Entities;
+using Book.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using ProjectBase.Interfaces;
 
 namespace Book.Infrastructure.Repositories;
 
@@ -38,7 +39,17 @@ public class CategoryRepository : ICategoryRepository
     {
         try
         {
-            await _context.Categories.AddAsync(category);
+            await _context.Categories.AddAsync(new Domain.Entities.Category()
+            {
+                Name = category.Name,
+                Description = category.Description,
+                ParentCategoryId = category.ParentCategoryId,
+                DeletedAt = null,
+                CreatedAt = DateTime.Now,
+                UpdatedAt = DateTime.Now,
+                IsActive = category.IsActive,
+                
+            });
             await _context.SaveChangesAsync();
             return true;
         }
@@ -55,7 +66,13 @@ public class CategoryRepository : ICategoryRepository
         {
             var item = await _context.Categories.FirstOrDefaultAsync(x => x.Id == category.Id);
             if (item == null) return false;
-            _context.Categories.Update(category);
+            item.Name = category.Name;
+            item.Description = category.Description;
+            item.ParentCategoryId = category.ParentCategoryId;
+            item.DeletedAt = category.DeletedAt;
+            item.UpdatedAt = DateTime.Now;
+            item.IsActive = category.IsActive;
+            _context.Categories.Update(item);
             await _context.SaveChangesAsync();
             return true;
         }
@@ -76,8 +93,20 @@ public class CategoryRepository : ICategoryRepository
             {
                 query = query.Where(u => u.DeletedAt == null);
             }
-
-            return await query.ToListAsync();
+            var result = await query.ToListAsync();
+            return new List<Category?>(result.Select(category => category != null
+                ? new Category()
+                {
+                    Id = category.Id,
+                    Name = category.Name,
+                    Description = category.Description,
+                    ParentCategoryId = category.ParentCategoryId,
+                    DeletedAt = category.DeletedAt,
+                    CreatedAt = category.CreatedAt,
+                    UpdatedAt = category.UpdatedAt,
+                    IsActive = category.IsActive
+                }   
+                : null));
         }
         catch (Exception e)
         {
@@ -96,8 +125,20 @@ public class CategoryRepository : ICategoryRepository
             {
                 query = query.Where(u => u.DeletedAt == null);
             }
-
-            return await query.FirstOrDefaultAsync(u => u.Id == id);
+            var result = await query.FirstOrDefaultAsync(u => u.Id == id);
+            return result != null
+                ? new Category()
+                {
+                    Id = result.Id,
+                    Name = result.Name,
+                    Description = result.Description,
+                    ParentCategoryId = result.ParentCategoryId,
+                    DeletedAt = result.DeletedAt,
+                    CreatedAt = result.CreatedAt,
+                    UpdatedAt = result.UpdatedAt,
+                    IsActive = result.IsActive
+                }   
+                : null;
         }
         catch (Exception e)
         {
@@ -110,7 +151,20 @@ public class CategoryRepository : ICategoryRepository
     {
         try
         {
-            return await _context.Categories.FirstOrDefaultAsync(x => x.Name == name);
+            var category = await _context.Categories.FirstOrDefaultAsync(x => x.Name == name);
+            return category != null
+                ? new Category()
+                {
+                    Id = category.Id,
+                    Name = category.Name,
+                    Description = category.Description,
+                    ParentCategoryId = category.ParentCategoryId,
+                    DeletedAt = category.DeletedAt,
+                    CreatedAt = category.CreatedAt,
+                    UpdatedAt = category.UpdatedAt,
+                    IsActive = category.IsActive
+                }
+                : null;
         }
         catch (Exception e)
         {
@@ -123,7 +177,20 @@ public class CategoryRepository : ICategoryRepository
     {
         try
         {
-            return await _context.Categories.FirstOrDefaultAsync(x => x.ParentCategoryId == parentCategoryId);
+            var category = await _context.Categories.FirstOrDefaultAsync(x => x.ParentCategoryId == parentCategoryId);
+            return category != null
+                ? new Category()
+                {
+                    Id = category.Id,
+                    Name = category.Name,
+                    Description = category.Description,
+                    ParentCategoryId = category.ParentCategoryId,
+                    DeletedAt = category.DeletedAt,
+                    CreatedAt = category.CreatedAt,
+                    UpdatedAt = category.UpdatedAt,
+                    IsActive = category.IsActive
+                }   
+                : null;
         }
         catch (Exception e)
         {

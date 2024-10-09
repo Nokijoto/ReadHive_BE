@@ -1,7 +1,7 @@
-﻿using Book.Infrastructure.Interfaces;
+﻿using ProjectBase.Interfaces;
 using Serilog;
 
-namespace Book.Infrastructure.Services;
+namespace ProjectBase.Services;
 
 public class SerilogLoggingService : ILoggingService
 {

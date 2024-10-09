@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Application.Models.Dto;
+namespace Book.Application.Models.Dto;
 
 public class AuthorDto : BaseDto
 {

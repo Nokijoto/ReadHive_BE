@@ -1,9 +1,9 @@
 ﻿using System;
-using Application.Models.Dto;
-using Application.Models.Results;
+using Book.Application.Models.Dto;
+using Book.Application.Models.Results;
 using MediatR;
 
-namespace Application.Queries.Category;
+namespace Book.Application.Queries.Category;
 
 public class GetCategoryQuery : IRequest<ResultBase<CategoryDto?>>
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Application.Exceptions;
+namespace Book.Application.Exceptions;
 
 public class ObjectAlreadyExistException : Exception
 {

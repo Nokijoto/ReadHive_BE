@@ -1,11 +1,12 @@
-﻿using Application.Commands.Author;
-using Application.Models.Dto;
-using Application.Models.Requests;
-using Application.Models.Responses;
-using Application.Queries.AuthorQueries;
-using Book.Infrastructure.Interfaces;
+﻿using Book.Application.Commands.Author;
+using Book.Application.Models.Dto;
+using Book.Application.Models.Requests;
+using Book.Application.Models.Responses;
+using Book.Application.Queries.AuthorQueries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using ProjectBase;
+using ProjectBase.Interfaces;
 
 namespace BookApi.Controllers;
 

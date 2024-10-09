@@ -1,9 +1,9 @@
 ﻿using System;
-using Application.Models.Dto;
-using Application.Models.Results;
+using Book.Application.Models.Dto;
+using Book.Application.Models.Results;
 using MediatR;
 
-namespace Application.Commands.Category;
+namespace Book.Application.Commands.Category;
 
 public class UpdateCategoryCommand : IRequest<ResultBase<CategoryDto?>>
 {

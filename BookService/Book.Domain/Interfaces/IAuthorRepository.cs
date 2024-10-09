@@ -1,6 +1,5 @@
-﻿using Domain.Entities;
-
-namespace Domain.Interfaces;
+﻿using Book.Domain.Entities;
+namespace Book.Domain.Interfaces;
 
 public interface IAuthorRepository
 {

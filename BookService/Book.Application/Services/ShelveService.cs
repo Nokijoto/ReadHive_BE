@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Application.Interfaces;
-using Application.Models.Dto;
-using Domain.Entities;
-using Domain.Interfaces;
-using Book.Infrastructure.Interfaces;
+using Book.Application.Interfaces;
+using Book.Application.Mappers;
+using Book.Application.Models.Dto;
+using Book.Application.Models.Results;
+using Book.Domain.Interfaces;
+using ProjectBase.Interfaces;
 
-namespace Application.Services;
+namespace Book.Application.Services;
 
 public class ShelveService : IShelveService
 {
@@ -43,7 +44,7 @@ public class ShelveService : IShelveService
         }
     }
 
-    public async Task<ShelveDto?> GetShelveAsync(Guid id)
+    public async Task<ResultBase<ShelveDto?>> GetShelveAsync(Guid id)
     {
         try
         {
@@ -54,17 +55,7 @@ public class ShelveService : IShelveService
             var shelve = await _shelveRepository.GetByIdAsync(id);
             if (shelve != null)
             {
-                var shelveDto = new ShelveDto()
-                {
-                    Id = shelve.Id,
-                    Description = shelve.Description,
-                    DeletedAt = shelve.DeletedAt,
-                    CreatedAt = shelve.CreatedAt,
-                    UpdatedAt = shelve.UpdatedAt,
-                    Title = shelve.Title,
-                    OwnerId = shelve.OwnerId,
-                };
-                return shelveDto;
+                return new ResultBase<ShelveDto?>(true,shelve.ToDto());
             }                
             return null;    
         }
@@ -75,12 +66,12 @@ public class ShelveService : IShelveService
         }
     }
 
-    public async Task<IEnumerable<ShelveDto?>> GetShelvesAsync()
+    public async Task<ResultBase<IEnumerable<ShelveDto?>>> GetShelvesAsync()
     {
         try
         {
             var shelves = await _shelveRepository.GetAllAsync();
-            return new List<ShelveDto?>(shelves.Select(shelve => shelve != null ? new ShelveDto() : new ShelveDto()));
+            return new ResultBase<IEnumerable<ShelveDto?>>(true,shelves.Select(shelve=>shelve.ToDto()));
         }
         catch (Exception e)
         {
@@ -89,7 +80,7 @@ public class ShelveService : IShelveService
         }
     }
 
-    public async Task<ShelveDto?> UpdateShelveAsync(ShelveDto shelveDto)
+    public async Task<ResultBase<ShelveDto?>> UpdateShelveAsync(ShelveDto shelveDto)
     {
         try
         {
@@ -100,11 +91,7 @@ public class ShelveService : IShelveService
             var shelve = await _shelveRepository.GetByIdAsync(shelveDto.Id);
             if (shelve != null)
             {   
-                shelve.Description = shelveDto.Description;
-                shelve.Title = shelveDto.Title;
-                shelve.OwnerId = shelveDto.OwnerId;
-                await _shelveRepository.UpdateAsync(shelve);
-                return shelveDto;
+                return new ResultBase<ShelveDto?>(true,shelve.ToDto());
             }       
             return null;
         }
@@ -119,15 +106,7 @@ public class ShelveService : IShelveService
     {
         try
         {
-            var shelve = new Shelve()
-            {
-                Description = shelveDto.Description,
-                Title = shelveDto.Title,
-                OwnerId = shelveDto.OwnerId,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-            };      
-            await _shelveRepository.AddAsync(shelve);
+            await _shelveRepository.AddAsync(shelveDto.ToEntity());
             return true;
         }
         catch (Exception e)

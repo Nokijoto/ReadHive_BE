@@ -1,7 +1,9 @@
-﻿using Domain.Entities;
-using Domain.Interfaces;
-using Book.Infrastructure.Interfaces;
+﻿using Book.Application.Models.Dto;
+using Book.Domain.Entities;
+using Book.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using ProjectBase;
+using ProjectBase.Interfaces;
 
 namespace Book.Infrastructure.Repositories;
 
@@ -38,7 +40,16 @@ public class GenreRepository : IGenreRepository
     {
         try
         {
-            await _context.Genres.AddAsync(genre);
+            await _context.Genres.AddAsync(new Genre()
+            {
+                IsActive = genre.IsActive,
+                Name = genre.Name,
+                Description = genre.Description,
+                ParentGenreId = genre.ParentGenreId,
+                DeletedAt = null,
+                CreatedAt = DateTime.Now,                
+                UpdatedAt = DateTime.Now,
+            }); 
             await _context.SaveChangesAsync();
             return true;
         }
@@ -55,7 +66,13 @@ public class GenreRepository : IGenreRepository
         {
             var item = await _context.Genres.FirstOrDefaultAsync(x => x.Id == genre.Id);
             if (item == null) return false;
-            _context.Genres.Update(genre);
+            item.Name = genre.Name;
+            item.Description = genre.Description;
+            item.ParentGenreId = genre.ParentGenreId;            
+            item.DeletedAt = genre.DeletedAt;
+            item.UpdatedAt = DateTime.Now;
+            item.IsActive = genre.IsActive;
+            _context.Genres.Update(item);               
             await _context.SaveChangesAsync();
             return true;
         }
@@ -75,8 +92,19 @@ public class GenreRepository : IGenreRepository
             {
                 query = query.Where(u => u.DeletedAt == null);
             }
-
-            return await query.ToListAsync();
+            var result = await query.ToListAsync();
+            return new List<Genre?>(result.Select(genre => genre != null
+                ? new Genre()
+                {
+                    Id = genre.Id,
+                    Name = genre.Name,                    
+                    Description = genre.Description,
+                    ParentGenreId = genre.ParentGenreId,
+                    DeletedAt = genre.DeletedAt,
+                    CreatedAt = genre.CreatedAt,
+                    UpdatedAt = genre.UpdatedAt,
+                    IsActive = genre.IsActive
+                }: null));
         }
         catch (Exception e)
         {
@@ -95,8 +123,20 @@ public class GenreRepository : IGenreRepository
             {
                 query = query.Where(u => u.DeletedAt == null);
             }
-
-            return await query.FirstOrDefaultAsync(u => u.Id == id);
+            var result = await query.FirstOrDefaultAsync(u => u.Id == id);
+            return result != null
+                ? new Genre()
+                {
+                    Id = result.Id,
+                    Name = result.Name,
+                    Description = result.Description,
+                    ParentGenreId = result.ParentGenreId,
+                    DeletedAt = result.DeletedAt,                    
+                    CreatedAt = result.CreatedAt,
+                    UpdatedAt = result.UpdatedAt,
+                    IsActive = result.IsActive
+                }   
+                : null;
         }
         catch (Exception e)
         {
@@ -109,7 +149,20 @@ public class GenreRepository : IGenreRepository
     {
         try
         {
-            return await _context.Genres.FirstOrDefaultAsync(x => x.Name == name);
+            var genre = await _context.Genres.FirstOrDefaultAsync(x => x.Name == name);
+            return genre != null
+                ? new Genre()
+                {
+                    Id = genre.Id,
+                    Name = genre.Name,
+                    Description = genre.Description,
+                    ParentGenreId = genre.ParentGenreId,
+                    DeletedAt = genre.DeletedAt,
+                    CreatedAt = genre.CreatedAt,
+                    UpdatedAt = genre.UpdatedAt,
+                    IsActive = genre.IsActive
+                }
+                : null;
         }
         catch (Exception e)
         {

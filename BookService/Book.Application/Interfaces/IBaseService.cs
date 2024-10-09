@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Application.Models.Dto;
+using Book.Application.Models.Dto;
 
-namespace Application.Interfaces;
+namespace Book.Application.Interfaces;
 
 public interface IBaseService<T>
 {

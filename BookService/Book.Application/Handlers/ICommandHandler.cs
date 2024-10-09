@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Application.Commands;
-using Application.Models.Results;
+using Book.Application.Commands;
+using Book.Application.Models.Results;
 
 namespace Application.Handlers;
 

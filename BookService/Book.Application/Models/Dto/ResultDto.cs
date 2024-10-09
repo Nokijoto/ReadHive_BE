@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Application.Models.Dto;
+namespace Book.Application.Models.Dto;
 
 public class ResultDto<T>
 {

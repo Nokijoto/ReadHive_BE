@@ -1,6 +1,6 @@
 ﻿using ProjectBase.Models;
 
-namespace Domain.Entities;
+namespace Book.Domain.Entities;
 
 public class Publisher : BaseModel
 {

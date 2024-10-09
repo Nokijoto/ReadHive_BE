@@ -1,7 +1,8 @@
-﻿using Domain.Entities;
-using Domain.Interfaces;
-using Book.Infrastructure.Interfaces;
+﻿using Book.Application.Models.Dto;
+using Book.Domain.Entities;
+using Book.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using ProjectBase.Interfaces;
 
 namespace Book.Infrastructure.Repositories;
 
@@ -38,7 +39,20 @@ public class PublisherRepository : IPublisherRepository
     {
         try
         {
-            await _context.Publishers.AddAsync(publisher);
+            await _context.Publishers.AddAsync(new Publisher()
+            {
+                Country = publisher.Country,
+                Description = publisher.Description,
+                FoundedAt = publisher.FoundedAt,
+                FoundedBy = publisher.FoundedBy,
+                IsActive = publisher.IsActive,
+                Name = publisher.Name,
+                PictureUrl = publisher.PictureUrl,
+                WebsiteUrl = publisher.WebsiteUrl,
+                DeletedAt = null,                
+                CreatedAt = DateTime.Now,
+                UpdatedAt = null         
+            });
             await _context.SaveChangesAsync();
             return true;
         }
@@ -55,7 +69,17 @@ public class PublisherRepository : IPublisherRepository
         {
             var item = await _context.Publishers.FirstOrDefaultAsync(x => x.Id == publisher.Id);
             if (item == null) return false;
-            _context.Publishers.Update(publisher);
+            item.Name = publisher.Name;
+            item.Description = publisher.Description;
+            item.PictureUrl = publisher.PictureUrl;
+            item.WebsiteUrl = publisher.WebsiteUrl;
+            item.Country = publisher.Country;
+            item.FoundedAt = publisher.FoundedAt;
+            item.FoundedBy = publisher.FoundedBy;
+            item.DeletedAt = publisher.DeletedAt;
+            item.UpdatedAt = DateTime.Now;
+            item.IsActive = publisher.IsActive;
+            _context.Publishers.Update(item);       
             await _context.SaveChangesAsync();
             return true;
         }
@@ -76,8 +100,24 @@ public class PublisherRepository : IPublisherRepository
             {
                 query = query.Where(u => u.DeletedAt == null);
             }
-
-            return await query.ToListAsync();
+            var result = await query.ToListAsync();
+            return new List<Publisher?>(result.Select(publisher => publisher != null
+                ? new Publisher()
+                {
+                    Id = publisher.Id,
+                    Name = publisher.Name,
+                    Description = publisher.Description,
+                    PictureUrl = publisher.PictureUrl,
+                    WebsiteUrl = publisher.WebsiteUrl,
+                    Country = publisher.Country,
+                    FoundedAt = publisher.FoundedAt,
+                    FoundedBy = publisher.FoundedBy,
+                    DeletedAt = publisher.DeletedAt,
+                    CreatedAt = publisher.CreatedAt,
+                    UpdatedAt = publisher.UpdatedAt,
+                    IsActive = publisher.IsActive
+                }                
+                : null));
         }
         catch (Exception e)
         {
@@ -96,8 +136,25 @@ public class PublisherRepository : IPublisherRepository
             {
                 query = query.Where(u => u.DeletedAt == null);
             }
-
-            return await query.FirstOrDefaultAsync(u => u.Id == id);
+            var result = await query.FirstOrDefaultAsync(u => u.Id == id);
+            return result != null
+                ? new Publisher()
+                {
+                    Id = result.Id,
+                    Name = result.Name,
+                    Description = result.Description,
+                    PictureUrl = result.PictureUrl,
+                    WebsiteUrl = result.WebsiteUrl,
+                    Country = result.Country,
+                    FoundedAt = result.FoundedAt,
+                    FoundedBy = result.FoundedBy,
+                    DeletedAt = result.DeletedAt,
+                    CreatedAt = result.CreatedAt,
+                    UpdatedAt = result.UpdatedAt,
+                    IsActive = result.IsActive
+                }
+                : null;
+            
         }
         catch (Exception e)
         {
@@ -110,7 +167,24 @@ public class PublisherRepository : IPublisherRepository
     {
         try
         {
-            return await _context.Publishers.FirstOrDefaultAsync(x => x.Name == name);
+            var publisher = await _context.Publishers.FirstOrDefaultAsync(x => x.Name == name);
+            return publisher != null
+                ? new Publisher()
+                {
+                    Id = publisher.Id,
+                    Name = publisher.Name,
+                    Description = publisher.Description,
+                    PictureUrl = publisher.PictureUrl,
+                    WebsiteUrl = publisher.WebsiteUrl,
+                    Country = publisher.Country,
+                    FoundedAt = publisher.FoundedAt,
+                    FoundedBy = publisher.FoundedBy,
+                    DeletedAt = publisher.DeletedAt,
+                    CreatedAt = publisher.CreatedAt,
+                    UpdatedAt = publisher.UpdatedAt,
+                    IsActive = publisher.IsActive
+                }                
+                : null;
         }
         catch (Exception e)
         {

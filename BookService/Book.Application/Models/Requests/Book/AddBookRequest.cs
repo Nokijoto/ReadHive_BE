@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Application.Models.Requests.Book;
+namespace Book.Application.Models.Requests.Book;
 
 public class AddBookRequest
 {

@@ -1,14 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Application.Interfaces;
-using Application.Models.Dto;
-using Domain.Entities;
-using Domain.Interfaces;
-using Book.Infrastructure.Interfaces;
+using Book.Application.Interfaces;
+using Book.Application.Mappers;
+using Book.Application.Models.Dto;
+using Book.Application.Models.Results;
+using Book.Domain.Interfaces;
+using ProjectBase.Interfaces;
 
-namespace Application.Services;
+namespace Book.Application.Services;
 
 public class BookService : IBookService
 {
@@ -25,30 +26,8 @@ public class BookService : IBookService
     {
         try
         {
-            var book = new Domain.Entities.Book()
-            {
-                Title = bookDto.Title,
-                Subtitle = bookDto.Subtitle,
-                Isbn = bookDto.Isbn,
-                Description = bookDto.Description,
-                AuthorId = bookDto.AuthorId,
-                PublisherId = bookDto.PublisherId,
-                GenreId = bookDto.GenreId,
-                CategoryId = bookDto.CategoryId,
-                Author = bookDto.Author,
-                Publisher = bookDto.Publisher,
-                Language = bookDto.Language,
-                Series = bookDto.Series,
-                NumberOfPages = bookDto.NumberOfPages,
-                Dimensions = bookDto.Dimensions,
-                Format = bookDto.Format,
-                Edition = bookDto.Edition,
-                TableOfContents = bookDto.TableOfContents,
-                Price = bookDto.Price,
-                PublishedAt = bookDto.PublishedAt,
-            };      
             
-            await _bookRepository.AddAsync(book);
+            await _bookRepository.AddAsync(bookDto.ToEntity());
             return true;
         }
         catch (Exception e)
@@ -58,7 +37,7 @@ public class BookService : IBookService
         }
     }
 
-    public async Task<bool> DeleteBookAsync(Guid id)
+    public async Task<bool> DeleteBookAsync(Guid? id)
     {
         try
         {
@@ -81,7 +60,7 @@ public class BookService : IBookService
         }
     }
 
-    public async Task<BookDto?> GetBookAsync(Guid id)
+    public async Task<ResultBase<BookDto?>> GetBookAsync(Guid id)
     {
         try
         {
@@ -92,30 +71,7 @@ public class BookService : IBookService
             var book = await _bookRepository.GetByIdAsync(id);
             if (book!= null)
             {
-                var bookDto = new BookDto()
-                {
-                    Id = book.Id,
-                    Title = book.Title,
-                    Subtitle = book.Subtitle,
-                    Isbn = book.Isbn,
-                    Description = book.Description,
-                    AuthorId = book.AuthorId,
-                    PublisherId = book.PublisherId,
-                    GenreId = book.GenreId,
-                    CategoryId = book.CategoryId,
-                    Author = book.Author,
-                    Publisher = book.Publisher,
-                    Language = book.Language,
-                    Series = book.Series,
-                    NumberOfPages = book.NumberOfPages,
-                    Dimensions = book.Dimensions,
-                    Format = book.Format,
-                    Edition = book.Edition,
-                    TableOfContents = book.TableOfContents,
-                    Price = book.Price,
-                    PublishedAt = book.PublishedAt,
-                };
-                return bookDto;
+                return new ResultBase<BookDto?>(true, book.ToDto());
             }
             return null;
         }
@@ -126,12 +82,12 @@ public class BookService : IBookService
         }
     }
 
-    public async Task<IEnumerable<BookDto?>> GetBooksAsync()
+    public async Task<ResultBase<IEnumerable<BookDto?>>> GetBooksAsync()
     {
         try
         {
             var books = await _bookRepository.GetAllAsync();
-            return new List<BookDto?>(books.Select(book => book != null ? new BookDto() : new BookDto()));
+            return new ResultBase<IEnumerable<BookDto?>>(true, books.Select(book => book.ToDto()));
         }
         catch (Exception e)
         {
@@ -140,7 +96,7 @@ public class BookService : IBookService
         }
     }
 
-    public async Task<BookDto?> UpdateBookAsync(BookDto bookDto)
+    public async Task<ResultBase<BookDto?>> UpdateBookAsync(BookDto bookDto)
     {
         try
         {
@@ -151,27 +107,8 @@ public class BookService : IBookService
             var book = await _bookRepository.GetByIdAsync(bookDto.Id);
             if (book != null)
             {
-                book.Title = bookDto.Title;
-                book.Subtitle = bookDto.Subtitle;
-                book.Isbn = bookDto.Isbn;
-                book.Description = bookDto.Description;
-                book.AuthorId = bookDto.AuthorId;
-                book.PublisherId = bookDto.PublisherId;
-                book.GenreId = bookDto.GenreId;
-                book.CategoryId = bookDto.CategoryId;
-                book.Author = bookDto.Author;
-                book.Publisher = bookDto.Publisher;
-                book.Language = bookDto.Language;
-                book.Series = bookDto.Series;
-                book.NumberOfPages = bookDto.NumberOfPages;
-                book.Dimensions = bookDto.Dimensions;
-                book.Format = bookDto.Format;
-                book.Edition = bookDto.Edition;
-                book.TableOfContents = bookDto.TableOfContents;
-                book.Price = bookDto.Price;
-                book.PublishedAt = bookDto.PublishedAt;
                 await _bookRepository.UpdateAsync(book);
-                return bookDto;
+                return new ResultBase<BookDto?>(true, book.ToDto());
             }
             return null;
         }

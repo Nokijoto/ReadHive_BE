@@ -1,7 +1,8 @@
-using Domain.Entities;
-using Domain.Interfaces;
-using Book.Infrastructure.Interfaces;
+using Book.Application.Models.Dto;
+using Book.Domain.Entities;
+using Book.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using ProjectBase.Interfaces;
 
 namespace Book.Infrastructure.Repositories;
 
@@ -40,9 +41,23 @@ public class AuthorRepository : IAuthorRepository
         }
     }
 
-    public async Task<bool> AddAsync(Author? author)
+    public async Task<bool> AddAsync(Author author)
     {
-        if (author == null)
+        var item = new Author()
+        {
+            FirstName = author.FirstName,
+            LastName = author.LastName,
+            Bio = author.Bio,
+            Nationality = author.Nationality,
+            PictureUrl = author.PictureUrl,
+            BirthDate = author.BirthDate,
+            DeathDate = author.DeathDate,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow,
+            DeletedAt = null,
+            
+        };
+        if (item == null)
         {
             _logger.LogWarn("Attempted to add a null author.", null);
             return false; 
@@ -50,18 +65,18 @@ public class AuthorRepository : IAuthorRepository
 
         try
         {
-            await _context.Authors.AddAsync(author);
+            await _context.Authors.AddAsync(item);
             await _context.SaveChangesAsync();
             return true;
         }
         catch (DbUpdateException dbEx)
         {
-            _logger.LogError($"Database error occurred while adding author '{author.FirstName} {author.LastName}': {dbEx.Message}", dbEx);
+            _logger.LogError($"Database error occurred while adding author '{item.FirstName} {item.LastName}': {dbEx.Message}", dbEx);
             return false; 
         }
         catch (Exception e)
         {
-            _logger.LogError($"Error occurred while adding author '{author.FirstName} {author.LastName}': {e.Message}", e);
+            _logger.LogError($"Error occurred while adding author '{item.FirstName} {item.LastName}': {e.Message}", e);
             return false; 
         }
     }
@@ -73,10 +88,23 @@ public class AuthorRepository : IAuthorRepository
             _logger.LogWarn("Attempted to update a null author.", null);
             return false; 
         }
-
+        var item = new Author()
+        {
+            FirstName = author.FirstName,
+            LastName = author.LastName,
+            Bio = author.Bio,
+            Nationality = author.Nationality,
+            PictureUrl = author.PictureUrl,
+            BirthDate = author.BirthDate,   
+            DeathDate = author.DeathDate,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow,
+            DeletedAt = null,
+            IsActive = true,
+        };
         try
         {
-            _context.Authors.Update(author);
+            _context.Authors.Update(item);
             await _context.SaveChangesAsync();
             return true;
         }
@@ -98,7 +126,36 @@ public class AuthorRepository : IAuthorRepository
                 query = query.Where(u => u!.DeletedAt == null);
             }
 
-            return await query.ToListAsync();
+            var author = await query.ToListAsync();
+            return new List<Author?>(query.Select(author => author != null ? new Author()
+            {
+                Id = author.Id,
+                FirstName = author.FirstName,
+                LastName = author.LastName,
+                Nationality = author.Nationality,
+                DeletedAt = author.DeletedAt,
+                CreatedAt = author.CreatedAt,
+                UpdatedAt = author.UpdatedAt,
+                PictureUrl = author.PictureUrl,
+                BirthDate = author.BirthDate,
+                DeathDate = author.DeathDate,
+                Bio = author.Bio,
+                IsActive = author.IsActive,
+            }: new Author()
+            {
+                Id = Guid.Empty,
+                FirstName = string.Empty,
+                LastName = string.Empty,
+                Nationality = string.Empty,
+                DeletedAt = null,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow,
+                PictureUrl = string.Empty,
+                BirthDate = null,
+                DeathDate = null,
+                Bio = string.Empty,
+                IsActive = null
+            }));
         }
         catch (Exception e)
         {
@@ -117,8 +174,22 @@ public class AuthorRepository : IAuthorRepository
             {
                 query = query.Where(u => u!.DeletedAt == null);
             }
-
-            return await query.FirstOrDefaultAsync(u => u!.Id == id);
+            var author =await query.FirstOrDefaultAsync(u => u!.Id == id);
+            return new Author()
+            {
+                Id = author.Id,
+                FirstName = author.FirstName,
+                LastName = author.LastName,
+                Nationality = author.Nationality,
+                DeletedAt = author.DeletedAt,
+                CreatedAt = author.CreatedAt,
+                UpdatedAt = author.UpdatedAt,
+                PictureUrl = author.PictureUrl,
+                BirthDate = author.BirthDate,
+                DeathDate = author.DeathDate,
+                Bio = author.Bio,
+                IsActive = author.IsActive,
+            };
         }
         catch (Exception e)
         {
@@ -138,7 +209,22 @@ public class AuthorRepository : IAuthorRepository
                 query = query.Where(u => u != null && u.DeletedAt == null);
             }
 
-            return await query.FirstOrDefaultAsync(x => x != null && x.FirstName == firstName);
+            var author =await query.FirstOrDefaultAsync(u => u!.FirstName == firstName);
+            return new Author()
+            {
+                Id = author.Id,
+                FirstName = author.FirstName,
+                LastName = author.LastName,
+                Nationality = author.Nationality,
+                DeletedAt = author.DeletedAt,
+                CreatedAt = author.CreatedAt,
+                UpdatedAt = author.UpdatedAt,
+                PictureUrl = author.PictureUrl,
+                BirthDate = author.BirthDate,
+                DeathDate = author.DeathDate,
+                Bio = author.Bio,
+                IsActive = author.IsActive,
+            };
         }
         catch (Exception e)
         {
@@ -158,7 +244,22 @@ public class AuthorRepository : IAuthorRepository
                 query = query.Where(u => u != null && u.DeletedAt == null);
             }
 
-            return await query.FirstOrDefaultAsync(x => x != null && x.LastName == lastName);
+            var author =await query.FirstOrDefaultAsync(u => u!.LastName == lastName);
+            return new Author()
+            {
+                Id = author.Id,
+                FirstName = author.FirstName,
+                LastName = author.LastName,
+                Nationality = author.Nationality,
+                DeletedAt = author.DeletedAt,
+                CreatedAt = author.CreatedAt,
+                UpdatedAt = author.UpdatedAt,
+                PictureUrl = author.PictureUrl,
+                BirthDate = author.BirthDate,
+                DeathDate = author.DeathDate,
+                Bio = author.Bio,
+                IsActive = author.IsActive,
+            };
         }
         catch (Exception e)
         {
@@ -181,13 +282,13 @@ public class AuthorRepository : IAuthorRepository
         }
     }
 
-    public Task<string?> GetFirstNameAsync(Guid id) => GetPropertyAsync(id, item => item.FirstName);
-    public Task<string?> GetLastNameAsync(Guid id) => GetPropertyAsync(id, item => item.LastName);
-    public Task<string?> GetBioAsync(Guid id) => GetPropertyAsync(id, item => item.Bio);
-    public Task<string?> GetPictureUrlAsync(Guid id) => GetPropertyAsync(id, item => item.PictureUrl);
-    public Task<DateOnly?> GetBirthDateAsync(Guid id) => GetPropertyAsync(id, item => item.BirthDate);
-    public Task<DateOnly?> GetDeathDateAsync(Guid id) => GetPropertyAsync(id, item => item.DeathDate);
-    public Task<string?> GetNationalityAsync(Guid id) => GetPropertyAsync(id, item => item.Nationality);
+    public async Task<string?> GetFirstNameAsync(Guid id) => await GetPropertyAsync(id, item => item.FirstName);
+    public async Task<string?> GetLastNameAsync(Guid id) => await GetPropertyAsync(id, item => item.LastName);
+    public async Task<string?> GetBioAsync(Guid id) => await GetPropertyAsync(id, item => item.Bio);
+    public async Task<string?> GetPictureUrlAsync(Guid id) => await GetPropertyAsync(id, item => item.PictureUrl);
+    public async Task<DateOnly?> GetBirthDateAsync(Guid id) => await GetPropertyAsync(id, item => item.BirthDate);
+    public async Task<DateOnly?> GetDeathDateAsync(Guid id) => await GetPropertyAsync(id, item => item.DeathDate);
+    public async Task<string?> GetNationalityAsync(Guid id) => await GetPropertyAsync(id, item => item.Nationality);
 
     private async Task<bool> SetPropertyAsync<T>(Guid id, Action<Author, T> setProperty, T value)
     {
@@ -206,11 +307,11 @@ public class AuthorRepository : IAuthorRepository
         }
     }
 
-    public Task<bool> SetFirstNameAsync(Guid id, string firstName) => SetPropertyAsync(id, (author, fn) => author.FirstName = fn, firstName);
-    public Task<bool> SetLastNameAsync(Guid id, string lastName) => SetPropertyAsync(id, (author, ln) => author.LastName = ln, lastName);
-    public Task<bool> SetBioAsync(Guid id, string bio) => SetPropertyAsync(id, (author, b) => author.Bio = b, bio);
-    public Task<bool> SetPictureUrlAsync(Guid id, string pictureUrl) => SetPropertyAsync(id, (author, url) => author.PictureUrl = url, pictureUrl);
-    public Task<bool> SetBirthDateAsync(Guid id, DateOnly birthDate) => SetPropertyAsync(id, (author, bd) => author.BirthDate = bd, birthDate);
-    public Task<bool> SetDeathDateAsync(Guid id, DateOnly deathDate) => SetPropertyAsync(id, (author, dd) => author.DeathDate = dd, deathDate);
-    public Task<bool> SetNationalityAsync(Guid id, string nationality) => SetPropertyAsync(id, (author, nat) => author.Nationality = nat, nationality);
+    public async Task<bool> SetFirstNameAsync(Guid id, string firstName) => await SetPropertyAsync(id, (author, fn) => author.FirstName = fn, firstName);
+    public async Task<bool> SetLastNameAsync(Guid id, string lastName) => await SetPropertyAsync(id, (author, ln) => author.LastName = ln, lastName);
+    public async Task<bool> SetBioAsync(Guid id, string bio) => await SetPropertyAsync(id, (author, b) => author.Bio = b, bio);
+    public async Task<bool> SetPictureUrlAsync(Guid id, string pictureUrl) => await SetPropertyAsync(id, (author, url) => author.PictureUrl = url, pictureUrl);
+    public async Task<bool> SetBirthDateAsync(Guid id, DateOnly birthDate) => await SetPropertyAsync(id, (author, bd) => author.BirthDate = bd, birthDate);
+    public async Task<bool> SetDeathDateAsync(Guid id, DateOnly deathDate) => await SetPropertyAsync(id, (author, dd) => author.DeathDate = dd, deathDate);
+    public async Task<bool> SetNationalityAsync(Guid id, string nationality) => await SetPropertyAsync(id, (author, nat) => author.Nationality = nat, nationality);
 }

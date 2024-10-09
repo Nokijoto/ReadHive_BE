@@ -1,9 +1,9 @@
 ﻿using System;
-using Application.Models.Dto;
-using Application.Models.Results;
+using Book.Application.Models.Dto;
+using Book.Application.Models.Results;
 using MediatR;
 
-namespace Application.Commands.Shelve;
+namespace Book.Application.Commands.Shelve;
 
 public class UpdateShelveCommand : IRequest<ResultBase<ShelveDto?>>
 {

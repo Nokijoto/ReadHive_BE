@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Application.Commands.Author;
-using Application.Interfaces;
-using Application.Models.Dto;
-using Application.Models.Results;
-using Book.Infrastructure.Interfaces;
+using Book.Application.Commands.Author;
+using Book.Application.Interfaces;
+using Book.Application.Models.Dto;
+using Book.Application.Models.Results;
 using MediatR;
+using ProjectBase.Interfaces;
 
-namespace Application.Handlers.Author;
+namespace Book.Application.Handlers.Author;
 
 public class UpdateAuthorCommandHandler : IRequestHandler<UpdateAuthorCommand, ResultBase<AuthorDto?>>
 {
@@ -28,7 +28,7 @@ public class UpdateAuthorCommandHandler : IRequestHandler<UpdateAuthorCommand, R
             request.AuthorDto.Id = request.Id;
             _logger.LogInformation($"Updating author with id {request.Id}");
             var result = await _authorService.UpdateAuthorAsync(request.AuthorDto);
-            return new ResultBase<AuthorDto?>(true, result);
+            return new ResultBase<AuthorDto?>(true, result.Data);
         }
         catch (Exception e)
         {

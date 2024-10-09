@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Application.Interfaces;
-using Application.Models.Dto;
-using Application.Models.Results;
-using Application.Queries.AuthorQueries;
-using Book.Infrastructure.Interfaces;
-using MediatR;
+using Book.Application.Interfaces;
+using Book.Application.Models.Dto;
+using Book.Application.Models.Results;
+using Book.Application.Queries.AuthorQueries;
 
-namespace Application.Handlers.Author;
+using MediatR;
+using ProjectBase.Interfaces;
+
+namespace Book.Application.Handlers.Author;
 
 public class GetAuthorQueryHandler : IRequestHandler<GetAuthorQuery, ResultBase<AuthorDto?>>
 {
@@ -30,7 +31,7 @@ public class GetAuthorQueryHandler : IRequestHandler<GetAuthorQuery, ResultBase<
             {
                 return new ResultBase<AuthorDto?>(false, null, new List<string> { "Author not found" });
             }
-            return new ResultBase<AuthorDto?>(true, author);
+            return new ResultBase<AuthorDto?>(true, author.Data);
         }
         catch (Exception e)
         {

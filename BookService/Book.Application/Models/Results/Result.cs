@@ -1,4 +1,4 @@
-﻿namespace Application.Models.Results;
+﻿namespace Book.Application.Models.Results;
 
 public class Result
 {

@@ -1,6 +1,6 @@
-﻿using Application.Models.Dto;
+﻿using Book.Application.Models.Dto;
 
-namespace Application.Models.Requests;
+namespace Book.Application.Models.Requests;
 
 public class AddAuthorRequest
 {

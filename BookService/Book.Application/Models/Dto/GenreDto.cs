@@ -1,4 +1,4 @@
-﻿namespace Application.Models.Dto;
+﻿namespace Book.Application.Models.Dto;
 
 public class GenreDto : BaseDto
 {

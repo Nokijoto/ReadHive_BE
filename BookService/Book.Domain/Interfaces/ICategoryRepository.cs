@@ -1,6 +1,7 @@
-﻿using Domain.Entities;
+﻿using Book.Domain.Entities;
 
-namespace Domain.Interfaces;
+
+namespace Book.Domain.Interfaces;
 
 public interface ICategoryRepository
 {

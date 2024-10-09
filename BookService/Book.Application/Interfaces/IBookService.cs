@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Application.Models.Dto;
+using Book.Application.Models.Results;
+using Book.Application.Models.Dto;
 
-namespace Application.Interfaces;
+namespace Book.Application.Interfaces;
 
 public interface IBookService 
 {
-    Task<bool> DeleteBookAsync(Guid id);
-    Task<BookDto?> GetBookAsync(Guid id);
-    Task<IEnumerable<BookDto?>> GetBooksAsync();
-    Task<BookDto?> UpdateBookAsync(BookDto bookDto);
+    Task<bool> DeleteBookAsync(Guid? id);
+    Task<ResultBase<BookDto?>> GetBookAsync(Guid id);
+    Task<ResultBase<IEnumerable<BookDto?>>> GetBooksAsync();
+    Task<ResultBase<BookDto?>> UpdateBookAsync(BookDto? bookDto);
     
-    Task<bool> AddBookAsync(BookDto bookDto);
+    Task<bool> AddBookAsync(BookDto? bookDto);
 
 }

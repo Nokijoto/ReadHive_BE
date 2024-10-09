@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Application.Models.Dto;
+using Book.Application.Models.Dto;
+using Book.Application.Models.Results;
 
-namespace Application.Interfaces;
+namespace Book.Application.Interfaces;
 
 public interface IPublisherService
 {
     Task<bool> DeletePublisherAsync(Guid id);
-    Task<PublisherDto?> GetPublisherAsync(Guid id);
-    Task<IEnumerable<PublisherDto?>> GetPublishersAsync();
-    Task<PublisherDto?> UpdatePublisherAsync(PublisherDto publisherDto);
+    Task<ResultBase<PublisherDto?>> GetPublisherAsync(Guid id);
+    Task<ResultBase<IEnumerable<PublisherDto?>>> GetPublishersAsync();
+    Task<ResultBase<PublisherDto?>> UpdatePublisherAsync(PublisherDto publisherDto);
     Task<bool> AddPublisherAsync(PublisherDto publisherDto);
 }

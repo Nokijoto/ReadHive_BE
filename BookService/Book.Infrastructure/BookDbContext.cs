@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+﻿using Book.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using ProjectBase.Models;
 
