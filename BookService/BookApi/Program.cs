@@ -55,16 +55,20 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-using (var scope = builder.Services.BuildServiceProvider().CreateScope())
+if(!app.Environment.IsDevelopment())
 {
-    using (var dbContext = scope.ServiceProvider.GetRequiredService<BookDbContext>())
+    using (var scope = builder.Services.BuildServiceProvider().CreateScope())
     {
-        if (dbContext.Database.GetPendingMigrations().Any())
+        using (var dbContext = scope.ServiceProvider.GetRequiredService<BookDbContext>())
         {
-            dbContext.Database.Migrate();
+            if (dbContext.Database.GetPendingMigrations().Any())
+            {
+                dbContext.Database.Migrate();
+            }
         }
     }
 }
+
 
 app.UseAuthorization();
 
