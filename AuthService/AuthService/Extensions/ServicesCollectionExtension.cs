@@ -17,6 +17,7 @@ public static class ServicesCollectionExtension
                     typeof(Application.Commands.Register.RegisterCommand).Assembly 
                 )
             );
+        services.AddTransient<IMailService,MailService>();
         services.AddScoped<ILoggingService, SerilogLoggingService>();
         services.AddScoped<IAuthService, Application.Services.AuthService>();
         services.AddScoped<IAppUserRepository, Infrastructure.Repositories.AppUserRepository>();

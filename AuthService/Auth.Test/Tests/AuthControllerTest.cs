@@ -34,7 +34,6 @@ public class AuthControllerTests
     [Fact]
     public async Task Login_ReturnsOk_WhenLoginIsSuccessful()
     {
-        // Arrange
         var request = new LoginRequest { Email = "test@example.com", Password = "password123" };
         var token= "token";
         var authResult = new AuthResult(true, token, DateTime.Now.AddHours(1));
@@ -44,10 +43,8 @@ public class AuthControllerTests
             .Setup(m => m.Send(It.IsAny<LoginCommand>(), default))
             .ReturnsAsync(authResult);
 
-        // Act
         var result = await _authController.Login(request);
 
-        // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
         var response = Assert.IsType<AuthResponse>(okResult.Value);
         Assert.Equal("token", response.Token);
@@ -56,31 +53,24 @@ public class AuthControllerTests
     [Fact]
     public async Task Login_ReturnsBadRequest_WhenLoginFails()
     {
-        // Arrange
         var request = new LoginRequest { Email = "test@example.com", Password = "wrongpassword" };
 
-        // Tworzymy wynik logowania, który zawiera błędy
         var authResult = new AuthResult(new List<string> { "Invalid credentials" });
 
-        // Konfigurujemy mocka mediatora
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<LoginCommand>(), default))
             .ReturnsAsync(authResult);
 
-        // Act
         var result = await _authController.Login(request);
 
-        // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
         var errorResponse = Assert.IsType<ErrorResponse>(badRequestResult.Value);
 
-        // Sprawdzamy, czy zawiera komunikat o błędzie
         Assert.Contains("Invalid credentials", errorResponse.Errors);
     }
     [Fact]
     public async Task Register_ReturnsNoContent_WhenRegistrationIsSuccessful()
     {
-        // Arrange
         var request = new RegisterRequest
         {
             UserName = "newuser",
@@ -97,10 +87,8 @@ public class AuthControllerTests
             .Setup(m => m.Send(It.IsAny<RegisterCommand>(), default))
             .ReturnsAsync(registerResult);
 
-        // Act
         var result = await _authController.Register(request);
 
-        // Assert
         Assert.IsType<NoContentResult>(result);
     }
 

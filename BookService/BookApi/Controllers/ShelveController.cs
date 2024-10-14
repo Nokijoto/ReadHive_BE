@@ -20,7 +20,7 @@ public class ShelveController :BaseApiController
         _sender = sender;
     }   
     
-     [HttpPost("add")]
+    [HttpPost("add")]
     public async Task<IActionResult> AddShelve([FromBody] AddRequest<ShelveDto> data)
     {
         if (!ModelState.IsValid)

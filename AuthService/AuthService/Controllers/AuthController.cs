@@ -1,4 +1,6 @@
-﻿using Application.Commands.Login;
+﻿using Application.Commands;
+using Application.Commands.ConfirmEmail;
+using Application.Commands.Login;
 using Application.Commands.Register;
 using Application.Interfaces;
 using Application.Models.Dto;
@@ -88,4 +90,86 @@ public sealed class AuthController : ControllerBase
     {
         return await Task.FromResult<IActionResult>(NoContent());
     }
+    
+    
+    
+    [HttpGet("send-reset-password-email")]
+    public async Task<IActionResult> SendResetPasswordEmail([FromQuery] string email)
+    {
+        try
+        {
+            var result = await _mediator.Send(new SendResetPasswordEmailCommand()
+            {
+                Email = email
+            });
+
+            if (!result)
+            {
+                return BadRequest(new ErrorResponse(new List<string> { "Nie udało się wysłać emaila z linkiem do resetowania hasła." }));
+            }
+
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            _log.LogError("Error in AuthController", e);
+            return StatusCode(500, new ErrorResponse(new List<string> { "Error while sending reset password email" }));
+        }
+    }
+
+    [HttpGet("reset-password")]
+    public async Task<IActionResult> ResetPassword([FromQuery] string email, [FromQuery] string token, [FromQuery] string newPassword)
+    {
+        try
+        {
+            var result = await _mediator.Send(new ResetPasswordCommand()
+            {
+                Email = email,
+                Token = token,
+                NewPassword = newPassword
+            });
+
+            if (!result)
+            {
+                return BadRequest(new ErrorResponse(new List<string> { "Nie udało się zresetować hasła." }));
+            }
+
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            _log.LogError("Error in AuthController", e);
+            return StatusCode(500, new ErrorResponse(new List<string> { "Error while resetting password" }));
+        }
+        
+    }
+
+
+    [HttpGet("verify-email")]
+    public async Task<IActionResult> VerifyEmail([FromQuery] string userEmail, [FromQuery] string token)
+    {
+        try
+        {
+            var result = await _mediator.Send(new ConfirmEmailCommand()
+            {
+                 userEmail = userEmail,
+                 Token = token
+                
+            });
+            
+            if (!result)
+            {
+                return BadRequest(new ErrorResponse(new List<string> { "Nie udało się potwierdzić Emailu." }));
+            }
+
+            return Ok();
+        }
+        catch (Exception e)
+        {
+            _log.LogError("Error in AuthController", e);
+            return StatusCode(500, new ErrorResponse(new List<string> { "Error while confirming email" }));
+        }
+    }
+  
+
 }

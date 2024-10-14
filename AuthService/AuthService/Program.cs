@@ -9,8 +9,11 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
+DotNetEnv.Env.Load("../../.env");
+
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddEnvironmentVariables();
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -19,7 +22,7 @@ Log.Logger = new LoggerConfiguration()
 
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer($"Server={builder.Configuration["AUTH_SERVER"]};Database={builder.Configuration["AUTH_DB"]};User Id={builder.Configuration["AUTH_DB_USER_ID"]};Password={builder.Configuration["AUTH_DB_PASSWORD"]};TrustServerCertificate={builder.Configuration["AUTH_DB_TRUST_SERVER_CERTIFICATE"]};"));
 
 // builder.Services.AddIdentityCore<AppUser>(options =>
 //     {
@@ -87,7 +90,7 @@ builder.Services.AddAuthentication(options =>
         jwt.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["Jwt:SecretKey"])),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["JWT_SECRET_KEY"])),
             ValidateIssuer = false,
             ValidateAudience = false,
             RequireExpirationTime = false,

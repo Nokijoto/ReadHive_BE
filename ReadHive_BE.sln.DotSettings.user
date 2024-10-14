@@ -1,12 +1,7 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/CodeInspection/PencilsConfiguration/ActualSeverity/@EntryValue">INFO</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=15924fa2_002D54e4_002D4f43_002Da09b_002D7785b74dce46/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="AuthControllerTests #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::C6B7F32A-AC61-4F34-8F86-D87A4C9F2DCE::net7.0::Auth.Test.Tests.AuthControllerTests&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
-&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/Highlighting/HighlightingSourceSnapshotLocation/@EntryValue">C:\Users\Rexma\AppData\Local\JetBrains\Rider2024.1\resharper-host\temp\Rider\vAny\CoverageData\_ReadHive_BE.300189181\Snapshot\snapshot.utdcvr</s:String>
+	
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=e2342a7d_002D692b_002D429f_002Da0b6_002D4c953525adea/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="AuthControllerTests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;xUnit::C6B7F32A-AC61-4F34-8F86-D87A4C9F2DCE::net7.0::Auth.Test.Tests.AuthControllerTests&lt;/TestId&gt;&#xD;
-  &lt;/TestAncestor&gt;&#xD;
+  &lt;Solution /&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

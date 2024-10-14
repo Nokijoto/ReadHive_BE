@@ -10,6 +10,7 @@ using Domain.Entities;
 using Infrastructure.Interfaces;
 using Microsoft.IdentityModel.Tokens;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
+using Application.Interfaces;
 
 namespace Application.Services;
 
@@ -18,12 +19,17 @@ public class AuthService : IAuthService
     private readonly UserManager<AppUser> _userManager; 
     private readonly IConfiguration _configuration;
     private readonly ILoggingService _log;
+    private readonly IMailService _mailService;
+    private readonly bool _isDevelopment;
 
-    public AuthService(UserManager<AppUser> userManager, IConfiguration configuration, ILoggingService log)
+
+    public AuthService(UserManager<AppUser> userManager, IConfiguration configuration, ILoggingService log, IMailService mailService)
     {
         _userManager = userManager;
         _configuration = configuration;
         _log = log;
+        _mailService = mailService;
+        _isDevelopment = _configuration["APP_ENVIRONMENT"] == "Development";
     }
 
     public async Task<AuthenticationResultDto> RegisterAsync(RegisterDto registerDto)
@@ -61,7 +67,7 @@ public class AuthService : IAuthService
                 ProfilePictureUrl = null,
             };
             
-            if (_configuration["AppEnvironment"] == "Development")
+            if (_isDevelopment)
             {
                 user.EmailConfirmed= true;
                 user.IsActive = true;
@@ -78,6 +84,14 @@ public class AuthService : IAuthService
                 };
             }
 
+            
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var confirmationLink = $"{_configuration["CLIENT_URL"]}/api/v1/Auth/verify-email?userEmail={user.Email}&token={Uri.EscapeDataString(token)}";
+            var subject = "Potwierdzenie rejestracji";
+            var body = $"Kliknij w link, aby potwierdzić swoje konto: <a href='{confirmationLink}'>Potwierdź konto</a>";
+
+            await _mailService.SendEmailAsync(user.Email, subject, body);
+            
             var tokenResult = await GenerateJwtToken(user);
 
             return new AuthenticationResultDto
@@ -96,7 +110,7 @@ public class AuthService : IAuthService
 
     public async Task<AuthenticationResultDto> LoginAsync(LoginDto loginDto)
     {
-        if ( _configuration["AppEnvironment"] == "Development" && (loginDto.Email == "user@example.com" && loginDto.Password == "string"))
+        if (_isDevelopment && loginDto is { Email: "user@example.com", Password: "string" })
         {
             var tokenResult2 = await GenerateJwtToken(new AppUser
             {
@@ -111,6 +125,7 @@ public class AuthService : IAuthService
                 Expiration = tokenResult2.Expiration
             };
         }
+
         
         var user = await _userManager.FindByEmailAsync(loginDto.Email);
         if (user == null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
@@ -145,19 +160,19 @@ public class AuthService : IAuthService
         var userRoles = await _userManager.GetRolesAsync(user);
         claims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT_SECRET_KEY"]));
         var credits = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
         var expiration = DateTime.UtcNow.AddHours(1);
 
-        if(_configuration["AppEnvironment"] == "Development")
+        if(_isDevelopment)
         {
             claims.Add(new Claim("IsDevelopment", "true"));
             expiration = DateTime.UtcNow.AddHours(4);
         }
 
         var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Audience"],
+            issuer: _configuration["JWT_ISSUER"],
+            audience: _configuration["JWT_AUDIENCE"],
             claims: claims,
             expires: expiration,
             signingCredentials: credits);
@@ -166,4 +181,63 @@ public class AuthService : IAuthService
 
         return (tokenString, expiration);
     }
+    
+    public async Task<AuthenticationResultDto> SendPasswordResetAsync(string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null)
+        {
+            return new AuthenticationResultDto
+            {
+                Succeeded = false,
+                Errors = new[] { new UserNotFoundException("Użytkownik o podanym e-mailu nie istnieje.") }
+            };
+        }
+
+        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        var resetLink = $"{_configuration["CLIENT_URL"]}/reset-password?userId={user.Id}&token={Uri.EscapeDataString(token)}";
+        var subject = "Resetowanie hasła";
+        var body = $"Kliknij w link, aby zresetować hasło: <a href='{resetLink}'>Resetuj hasło</a>";
+
+        await _mailService.SendEmailAsync(user.Email, subject, body);
+
+        return new AuthenticationResultDto
+        {
+            Succeeded = true,
+        };
+    }
+
+    
+    
+    public async Task<AuthenticationResultDto> ResetPasswordAsync(ResetPasswordDto resetPasswordDto)
+    {
+        var user = await _userManager.FindByIdAsync(resetPasswordDto.UserId);
+        if (user == null)
+        {
+            return new AuthenticationResultDto
+            {
+                Succeeded = false,
+                Errors = new[] { new UserNotFoundException() }
+            };
+        }
+
+        var result = await _userManager.ResetPasswordAsync(user, resetPasswordDto.Token, resetPasswordDto.NewPassword);
+
+        if (!result.Succeeded)
+        {
+            return new AuthenticationResultDto
+            {
+                Succeeded = false,
+                Errors = result.Errors.Select(e => new DomainException(e.Description))
+            };
+        }
+
+        return new AuthenticationResultDto
+        {
+            Succeeded = true,
+        };
+    }
+
+    
+    
 }

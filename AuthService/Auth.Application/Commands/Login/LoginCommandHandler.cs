@@ -18,6 +18,14 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, AuthResult>
 
     public async Task<AuthResult> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
+        if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
+        {
+            return new AuthResult(false, string.Empty, null)
+            {
+                Errors = new List<string> { "Email or Password cannot be empty" }
+            };
+        }
+
         try
         {
             var response = await _authService.LoginAsync(new LoginDto(request.Email, request.Password));
