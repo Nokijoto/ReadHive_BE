@@ -1,8 +1,9 @@
-﻿using Domain.Entities;
+﻿using Application.Commands;
+using Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
-namespace Application.Commands.ConfirmEmail;
+namespace Application.Handlers;
 
 public class ConfirmEmailCommandHandler : IRequestHandler<ConfirmEmailCommand, bool>
 {

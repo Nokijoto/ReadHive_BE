@@ -1,11 +1,11 @@
-﻿using Domain.Entities;
+﻿using Application.Commands;
+using Domain.Entities;
 using Infrastructure.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Application.Interfaces;
 using Microsoft.Extensions.Configuration;
 
-namespace Application.Commands;
+namespace Application.Handlers;
 
 public class SendResetPasswordEmailCommandHandler : IRequestHandler<SendResetPasswordEmailCommand, bool>
 {

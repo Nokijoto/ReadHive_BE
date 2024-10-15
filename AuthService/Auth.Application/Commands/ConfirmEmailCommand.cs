@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Application.Commands.ConfirmEmail;
+namespace Application.Commands;
 
 public class ConfirmEmailCommand: IRequest<bool>
 {

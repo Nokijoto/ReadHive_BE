@@ -1,8 +1,7 @@
-﻿using Application.Models.Dto;
-using Application.Models.Results;
+﻿using Application.Models.Results;
 using MediatR;
 
-namespace Application.Commands.Login;
+namespace Application.Commands;
 
 public  class LoginCommand : IRequest<AuthResult>
 {

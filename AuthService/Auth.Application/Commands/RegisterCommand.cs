@@ -1,8 +1,7 @@
-﻿using Application.Models.Dto;
-using Application.Models.Results;
+﻿using Application.Models.Results;
 using MediatR;
 
-namespace Application.Commands.Register;
+namespace Application.Commands;
 
 public class RegisterCommand: IRequest<RegisterResult>
 {

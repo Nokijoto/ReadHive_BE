@@ -1,10 +1,11 @@
-﻿using Application.Interfaces;
+﻿using Application.Commands;
+using Application.Interfaces;
 using Application.Models.Dto;
 using Application.Models.Results;
 using Infrastructure.Interfaces;
 using MediatR;
 
-namespace Application.Commands.Register;
+namespace Application.Handlers;
 
 public class RegisterCommandHandler : IRequestHandler<RegisterCommand,RegisterResult>
 {

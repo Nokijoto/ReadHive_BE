@@ -1,6 +1,7 @@
-﻿using Application.Models.Results;
+﻿using Application.Commands;
+using Application.Models.Results;
 
-namespace Application.Commands;
+namespace Application.Handlers;
 
 public interface ICommandHandler<in TCommand> 
     where TCommand : ICommand    
