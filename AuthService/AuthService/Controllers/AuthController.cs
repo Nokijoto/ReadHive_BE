@@ -1,9 +1,5 @@
 ﻿using Application.Commands;
-using Application.Commands.ConfirmEmail;
-using Application.Commands.Login;
-using Application.Commands.Register;
-using Application.Interfaces;
-using Application.Models.Dto;
+using Application.Exceptions;
 using Application.Models.Requests;
 using Application.Models.Responses;
 using Infrastructure.Interfaces;
@@ -17,13 +13,11 @@ namespace AuthService.Controllers;
 [ApiController]
 public sealed class AuthController : ControllerBase
 {
-    private readonly IAuthService _authService;
     private readonly IMediator _mediator;
     private readonly ILoggingService _log;
 
-    public AuthController(IAuthService authService, IMediator mediator, ILoggingService log)
+    public AuthController(IMediator mediator, ILoggingService log)
     {
-        _authService = authService;
         _mediator = mediator;
         _log = log;
     }
@@ -33,19 +27,24 @@ public sealed class AuthController : ControllerBase
     {
         try
         {
-            var result = await _mediator.Send(new LoginCommand(request.Email, request.Password));
+            var result = await _mediator.Send(
+                new LoginCommand(
+                    request.Email, 
+                    request.Password
+                    ));
 
             if (!result.Succeeded)
             {
+                _log.LogError($"An error occurred during login: {result.Errors}");
                 return BadRequest(new ErrorResponse(result.Errors));
             }
 
-            return Ok(new AuthResponse(result.Token, result.Expiration));
+            return Ok(new AuthResponse(result));
         }
         catch (Exception ex)
         {
             _log.LogError("An error occurred during login", ex);
-            return StatusCode(500, new ErrorResponse(new List<string> { "An unexpected error occurred." }));
+            return StatusCode(500, new ErrorResponse(new List<string> { new InternalServerErrorException().Message}));
         }
     }
 
@@ -54,11 +53,8 @@ public sealed class AuthController : ControllerBase
     {
         try
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            
             var result = await _mediator.Send(
                 new RegisterCommand(
                     request.UserName,
@@ -68,22 +64,24 @@ public sealed class AuthController : ControllerBase
                     request.LastName)
             );
 
-            if ((bool)(!result.Succeeded)!)
+            if (!result.Succeeded)
             {
-                var errorMessages = result.Errors ?.Select(e => e) ?? new List<string>();
-
+                var errorMessages = result.Errors?.Select(e => e.ToString()) ?? new List<string>();
+                _log.LogError($"Registration failed for user {request.Email}");
                 return BadRequest(new ErrorResponse(errorMessages));
             }
 
             return NoContent();
+
         }
         catch (Exception e)
         {
             _log.LogError("Error in AuthController", e);
-            return StatusCode(500, new ErrorResponse(new List<string> { "Error while registering user" }));
+            return StatusCode(500, new ErrorResponse(new List<string> { new InternalServerErrorException().Message}));
         }
     }
     
+    //TODO: DELETE THIS IN FINAL VERSION
     [HttpGet("verifyToken")]
     [Authorize]
     public async Task<IActionResult> VerifyToken()
@@ -92,15 +90,14 @@ public sealed class AuthController : ControllerBase
     }
     
     
-    
     [HttpGet("send-reset-password-email")]
-    public async Task<IActionResult> SendResetPasswordEmail([FromQuery] string email)
+    public async Task<IActionResult> SendResetPasswordEmail([FromQuery] SendResetPasswordRequest request)
     {
         try
         {
             var result = await _mediator.Send(new SendResetPasswordEmailCommand()
             {
-                Email = email
+                Email = request.Email
             });
 
             if (!result)
@@ -113,20 +110,20 @@ public sealed class AuthController : ControllerBase
         catch (Exception e)
         {
             _log.LogError("Error in AuthController", e);
-            return StatusCode(500, new ErrorResponse(new List<string> { "Error while sending reset password email" }));
+            return StatusCode(500, new ErrorResponse(new List<string> { new InternalServerErrorException().Message }));
         }
     }
 
     [HttpGet("reset-password")]
-    public async Task<IActionResult> ResetPassword([FromQuery] string email, [FromQuery] string token, [FromQuery] string newPassword)
+    public async Task<IActionResult> ResetPassword([FromQuery] ResetPasswordRequest request)
     {
         try
         {
             var result = await _mediator.Send(new ResetPasswordCommand()
             {
-                Email = email,
-                Token = token,
-                NewPassword = newPassword
+                Email = request.email,
+                Token = request.token,
+                NewPassword = request.newPassword
             });
 
             if (!result)
@@ -139,27 +136,27 @@ public sealed class AuthController : ControllerBase
         catch (Exception e)
         {
             _log.LogError("Error in AuthController", e);
-            return StatusCode(500, new ErrorResponse(new List<string> { "Error while resetting password" }));
+            return StatusCode(500, new ErrorResponse(new List<string> { new InternalServerErrorException().Message }));
         }
         
     }
 
 
     [HttpGet("verify-email")]
-    public async Task<IActionResult> VerifyEmail([FromQuery] string userEmail, [FromQuery] string token)
+    public async Task<IActionResult> VerifyEmail([FromQuery] VerifyEmailRequest request)
     {
         try
         {
             var result = await _mediator.Send(new ConfirmEmailCommand()
             {
-                 userEmail = userEmail,
-                 Token = token
+                 userEmail = request.userEmail,
+                 Token = request.token
                 
             });
             
             if (!result)
             {
-                return BadRequest(new ErrorResponse(new List<string> { "Nie udało się potwierdzić Emailu." }));
+                return BadRequest(new ErrorResponse(new List<string> { "Nie udało się potwierdzić E-mailu." }));
             }
 
             return Ok();
@@ -167,7 +164,7 @@ public sealed class AuthController : ControllerBase
         catch (Exception e)
         {
             _log.LogError("Error in AuthController", e);
-            return StatusCode(500, new ErrorResponse(new List<string> { "Error while confirming email" }));
+            return StatusCode(500, new ErrorResponse(new List<string> { new InternalServerErrorException().Message }));
         }
     }
   

@@ -21,4 +21,8 @@ public class SerilogLoggingService : ILoggingService
     {
         _logger.Error(ex, message);
     }
+    public void LogError(string message)
+    {
+        _logger.Error(message);
+    }
 }

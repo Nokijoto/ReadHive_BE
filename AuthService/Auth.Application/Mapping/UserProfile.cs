@@ -1,5 +1,4 @@
 ﻿using Application.Commands;
-using Application.Commands.Register;
 using Application.Models.Dto;
 using Application.Models.Requests;
 using AutoMapper;

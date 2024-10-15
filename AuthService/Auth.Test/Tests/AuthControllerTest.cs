@@ -1,5 +1,4 @@
-﻿using Application.Commands.Login;
-using Application.Commands.Register;
+﻿using Application.Commands;
 using Application.Interfaces;
 using Application.Models.Requests;
 using Application.Models.Responses;
@@ -14,19 +13,16 @@ namespace Auth.Test.Tests;
 
 public class AuthControllerTests
 {
-    private readonly Mock<IAuthService> _authServiceMock;
     private readonly Mock<IMediator> _mediatorMock;
     private readonly Mock<ILoggingService> _logMock;
     private readonly AuthController _authController;
 
     public AuthControllerTests()
     {
-        _authServiceMock = new Mock<IAuthService>();
         _mediatorMock = new Mock<IMediator>();
         _logMock = new Mock<ILoggingService>();
 
         _authController = new AuthController(
-            _authServiceMock.Object,
             _mediatorMock.Object,
             _logMock.Object);
     }

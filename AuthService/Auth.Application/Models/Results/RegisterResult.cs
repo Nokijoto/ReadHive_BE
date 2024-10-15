@@ -2,7 +2,7 @@
 
 public class RegisterResult : Result
 {
-    public bool? Succeeded { get; set; }
+    public bool Succeeded { get; set; }
     public List<string>? Errors { get; set; }
     
     public RegisterResult(bool succeeded, List<string>? errors = null)

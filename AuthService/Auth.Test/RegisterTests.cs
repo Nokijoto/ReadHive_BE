@@ -1,5 +1,5 @@
-﻿using Application.Commands.Login;
-using Application.Commands.Register;
+﻿using Application.Commands;
+using Application.Handlers;
 using Application.Interfaces;
 using Application.Models.Dto;
 using Infrastructure.Interfaces;

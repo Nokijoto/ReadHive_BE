@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Application.Commands;
 using Application.Interfaces;
 using Domain.Interfaces;
 using Infrastructure.Interfaces;
@@ -14,7 +15,7 @@ public static class ServicesCollectionExtension
         services.AddMediatR(
             cfg => 
                 cfg.RegisterServicesFromAssemblies(
-                    typeof(Application.Commands.Register.RegisterCommand).Assembly 
+                    typeof(RegisterCommand).Assembly 
                 )
             );
         services.AddTransient<IMailService,MailService>();

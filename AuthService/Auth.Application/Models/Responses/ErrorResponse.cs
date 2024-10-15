@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
+﻿
 namespace Application.Models.Responses;
 
 public class ErrorResponse
@@ -10,6 +7,5 @@ public class ErrorResponse
     {
         Errors = errors?.ToList() ?? new List<string>();
     }
-
     public List<string> Errors { get; } 
 }
