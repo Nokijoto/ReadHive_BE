@@ -1,7 +1,9 @@
 ﻿using System.Reflection;
 using Application.Commands;
 using Application.Interfaces;
+using Application.Validators;
 using Domain.Interfaces;
+using FluentValidation;
 using Infrastructure.Interfaces;
 using Infrastructure.Services;
 
@@ -23,6 +25,12 @@ public static class ServicesCollectionExtension
         services.AddScoped<IAuthService, Application.Services.AuthService>();
         services.AddScoped<IAppUserRepository, Infrastructure.Repositories.AppUserRepository>();
         services.AddScoped<IUserService, Application.Services.UserService>();
+        
+        services.AddScoped<IValidator<RegisterCommand>, RegisterCommandValidator>();
+        services.AddScoped<IValidator<SendResetPasswordEmailCommand>, SendResetPasswordEmailValidator>();
+        services.AddScoped<IValidator<ResetPasswordCommand>, ResetPasswordCommandValidator>();      
+        services.AddScoped<IValidator<ConfirmEmailCommand>, ConfirmEmailCommandValidator>();
+        services.AddScoped<IValidator<LoginCommand>, LoginCommandValidator>();
         
         return services;
     }

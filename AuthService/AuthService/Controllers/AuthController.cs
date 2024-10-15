@@ -91,13 +91,13 @@ public sealed class AuthController : ControllerBase
     
     
     [HttpGet("send-reset-password-email")]
-    public async Task<IActionResult> SendResetPasswordEmail([FromQuery] SendResetPasswordRequest request)
+    public async Task<IActionResult> SendResetPasswordEmail([FromQuery] string email)
     {
         try
         {
             var result = await _mediator.Send(new SendResetPasswordEmailCommand()
             {
-                Email = request.Email
+                Email = email
             });
 
             if (!result)
@@ -115,15 +115,15 @@ public sealed class AuthController : ControllerBase
     }
 
     [HttpGet("reset-password")]
-    public async Task<IActionResult> ResetPassword([FromQuery] ResetPasswordRequest request)
+    public async Task<IActionResult> ResetPassword([FromQuery] string email, [FromQuery] string token, [FromQuery] string newPassword)
     {
         try
         {
             var result = await _mediator.Send(new ResetPasswordCommand()
             {
-                Email = request.email,
-                Token = request.token,
-                NewPassword = request.newPassword
+                Email = email,
+                Token = token,
+                NewPassword = newPassword
             });
 
             if (!result)
@@ -143,14 +143,14 @@ public sealed class AuthController : ControllerBase
 
 
     [HttpGet("verify-email")]
-    public async Task<IActionResult> VerifyEmail([FromQuery] VerifyEmailRequest request)
+    public async Task<IActionResult> VerifyEmail([FromQuery] string userEmail, [FromQuery] string token)
     {
         try
         {
             var result = await _mediator.Send(new ConfirmEmailCommand()
             {
-                 userEmail = request.userEmail,
-                 Token = request.token
+                 userEmail = userEmail,
+                 Token = token
                 
             });
             
