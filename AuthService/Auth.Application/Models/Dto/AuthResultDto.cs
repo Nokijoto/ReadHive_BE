@@ -2,8 +2,8 @@
 
 public class AuthenticationResultDto
 {
-    public bool Succeeded { get; init; }
-    public string? Token { get; init; } 
-    public IEnumerable<Exception>? Errors { get; init; }
-    public DateTime? Expiration { get; init; }
+    public bool Succeeded { get; set; }
+    public string? Token { get; set; } 
+    public IEnumerable<Exception>? Errors { get; set; }
+    public DateTime? Expiration { get; set; }
 }

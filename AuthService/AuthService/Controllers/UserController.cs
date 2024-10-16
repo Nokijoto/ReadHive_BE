@@ -30,7 +30,7 @@ public class UserController : ControllerBase
             {
                 return Unauthorized();
             }
-
+    
             if (!Guid.TryParse(userIdString, out var userId))
             {
                 return BadRequest("Nieprawidłowy identyfikator użytkownika.");

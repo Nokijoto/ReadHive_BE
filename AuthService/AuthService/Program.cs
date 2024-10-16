@@ -45,6 +45,7 @@ builder.Services.AddIdentity<AppUser, IdentityRole>()
 builder.Host.UseSerilog();
 
 builder.Services.AddControllers();
+builder.Services.AddFluentValidationAutoValidation();
 
 // Add services to the container.
 builder.Services.AddInfrastructure();

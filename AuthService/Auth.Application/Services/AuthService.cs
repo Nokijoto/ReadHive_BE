@@ -34,6 +34,11 @@ public class AuthService : IAuthService
 
     public async Task<AuthenticationResultDto> RegisterAsync(RegisterDto registerDto)
     {
+        var operationResult = new AuthenticationResultDto()
+        {
+            Succeeded = false,
+            Errors = new List<Exception>()
+        };
         try
         {
             var user = new AppUser
@@ -77,34 +82,40 @@ public class AuthService : IAuthService
 
             if (!result.Succeeded)
             {
-                return new AuthenticationResultDto
-                {
-                    Succeeded = false,
-                    Errors = result.Errors.Select(e => new DomainException(e.Description))
-                };
+                operationResult.Errors = result.Errors.Select(e => new DomainException(e.Description));
+                return operationResult;
             }
 
             
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            
             var confirmationLink = $"{_configuration["CLIENT_URL"]}/api/v1/Auth/verify-email?userEmail={user.Email}&token={Uri.EscapeDataString(token)}";
             var subject = "Potwierdzenie rejestracji";
             var body = $"Kliknij w link, aby potwierdzić swoje konto: <a href='{confirmationLink}'>Potwierdź konto</a>";
 
-            await _mailService.SendEmailAsync(user.Email, subject, body);
+            try
+            {
+                await _mailService.SendEmailAsync(user.Email, subject, body);
+            }
+            catch (Exception mailEx)
+            {
+                _log.LogError("Email sending failed", mailEx);
+                operationResult.Errors = new List<Exception>() { new ErrorSendingEmailException() };
+                // operationResult.Errors.Add(mailEx);
+            }
             
             var tokenResult = await GenerateJwtToken(user);
 
-            return new AuthenticationResultDto
-            {
-                Succeeded = true,
-                Token = tokenResult.Token,
-                Expiration = tokenResult.Expiration,
-            };
+
+            operationResult.Succeeded = true;
+            operationResult.Token = tokenResult.Token;
+            operationResult.Expiration = tokenResult.Expiration;
+            return operationResult;
         }
         catch (Exception e)
         {
-            _log.LogError("Error in AuthService", e);
-            return new AuthenticationResultDto{ Succeeded = false, Errors = new List<Exception> { e } };
+            _log.LogError($"Error occurred while registering user: {registerDto.Email}", e);
+            return operationResult;
         }
     }
 
