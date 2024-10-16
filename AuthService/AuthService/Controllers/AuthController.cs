@@ -102,7 +102,7 @@ public sealed class AuthController : ControllerBase
 
             if (!result)
             {
-                return BadRequest(new ErrorResponse(new List<string> { "Nie udało się wysłać emaila z linkiem do resetowania hasła." }));
+                return BadRequest(new ErrorResponse(new List<string> { new ErrorSendingEmailException().Message }));
             }
 
             return Ok();
